@@ -4,8 +4,9 @@
   <meta charset="UTF-8">
   <title>Şiir Sesleri</title>
   <style>
+    /* Genel stil */
     body {
-      background-color: #fdf6e3;
+      background-color: #fdf6e3; /* pastel kağıt rengi */
       font-family: 'Georgia', serif;
       color: #333;
       text-align: center;
@@ -15,31 +16,40 @@
       overflow-x: hidden;
     }
 
-    /* Sol dekoratif bitki */
+    /* Sol dekor (leaves) */
     .left-decor {
       position: fixed;
       top: 0;
       left: 0;
-      width: 100px;
+      width: 120px;
       height: 100%;
-      opacity: 0.15;
+      opacity: 0.2;
       z-index: 0;
+      background-image: url('dekorasyon/left_leaves.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: top;
     }
 
-    /* Sağ dekoratif ağaç */
+    /* Sağ dekor (sarmaşık) */
     .right-decor {
       position: fixed;
       top: 0;
       right: 0;
-      width: 100px;
+      width: 120px;
       height: 100%;
-      opacity: 0.15;
+      opacity: 0.2;
       z-index: 0;
+      background-image: url('dekorasyon/right_plant.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: top;
     }
 
+    /* Başlık */
     h1 {
       font-size: 3em;
-      margin-bottom: 30px;
+      margin-bottom: 40px;
       font-style: italic;
       color: #5a3e36;
       text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
@@ -47,15 +57,16 @@
       z-index: 1;
     }
 
+    /* Şiir kartı */
     .poem-card {
       background-color: #fff8f0;
       border: 1px solid #e2d8c3;
       border-radius: 12px;
-      width: 320px;
+      width: 340px;
       margin: 0 auto;
-      padding: 25px;
+      padding: 30px 25px;
       box-shadow: 2px 2px 12px rgba(0,0,0,0.1);
-      transition: transform 0.2s;
+      transition: transform 0.2s, box-shadow 0.2s;
       position: relative;
       z-index: 1;
     }
@@ -65,49 +76,52 @@
     }
 
     h2 {
-      font-size: 1.5em;
-      margin-bottom: 15px;
+      font-size: 1.6em;
+      margin-bottom: 20px;
       color: #6b4c3b;
     }
 
     audio {
       width: 100%;
-      margin-top: 10px;
+      margin-top: 15px;
     }
 
     footer {
-      margin-top: 40px;
-      font-size: 0.9em;
+      margin-top: 50px;
+      font-size: 0.95em;
       color: #888;
       position: relative;
       z-index: 1;
     }
+
+    /* Responsive */
+    @media screen and (max-width: 500px) {
+      .poem-card { width: 90%; padding: 20px; }
+      h1 { font-size: 2.2em; }
+      h2 { font-size: 1.3em; }
+      .left-decor, .right-decor { width: 60px; }
+    }
   </style>
 </head>
 <body>
-  <!-- Sol dekor SVG -->
-  <div class="left-decor">
-    <svg viewBox="0 0 64 256" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-      <path d="M32 0 L36 64 L28 128 L32 192 L26 256" stroke="green" stroke-width="2" fill="none"/>
-    </svg>
-  </div>
 
-  <!-- Sağ dekor SVG -->
-  <div class="right-decor">
-    <svg viewBox="0 0 64 256" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-      <path d="M32 0 L28 64 L36 128 L32 192 L38 256" stroke="green" stroke-width="2" fill="none"/>
-    </svg>
-  </div>
+  <!-- Dekorasyonlar -->
+  <div class="left-decor"></div>
+  <div class="right-decor"></div>
 
+  <!-- Başlık -->
   <h1>Şiir Sesleri</h1>
 
+  <!-- Şiir Kartı -->
   <div class="poem-card">
     <h2>İstiklal Marşı</h2>
     <audio controls>
-      <source src="istiklalmarsi.mp3" type="audio/mpeg">
+      <source src="siirler/istiklalmarsi.mp3" type="audio/mpeg">
     </audio>
   </div>
 
+  <!-- Alt bilgi -->
   <footer>Yunus Emre ruhunu anan şiir sesleri</footer>
+
 </body>
 </html>
