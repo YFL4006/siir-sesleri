@@ -1,2 +1,2 @@
 # siir-sesleri
-Yflnin 
+Yflnin 4006 projesi için şiirlerinin ses kayıtlarıdır.
