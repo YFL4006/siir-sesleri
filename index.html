@@ -15,25 +15,26 @@
       overflow-x: hidden;
     }
 
-    /* Sol ve sağ dekoratif ağaç/bitki SVG'leri */
-    body::before, body::after {
-      content: "";
+    /* Sol dekoratif bitki */
+    .left-decor {
       position: fixed;
       top: 0;
+      left: 0;
       width: 100px;
       height: 100%;
-      background-repeat: no-repeat;
-      background-size: contain;
       opacity: 0.15;
       z-index: 0;
     }
-    body::before {
-      left: 0;
-      background-image: url('sol-bitki.svg'); /* soldaki dekoratif bitki */
-    }
-    body::after {
+
+    /* Sağ dekoratif ağaç */
+    .right-decor {
+      position: fixed;
+      top: 0;
       right: 0;
-      background-image: url('sag-agac.svg'); /* sağdaki dekoratif ağaç */
+      width: 100px;
+      height: 100%;
+      opacity: 0.15;
+      z-index: 0;
     }
 
     h1 {
@@ -84,6 +85,20 @@
   </style>
 </head>
 <body>
+  <!-- Sol dekor SVG -->
+  <div class="left-decor">
+    <svg viewBox="0 0 64 256" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+      <path d="M32 0 L36 64 L28 128 L32 192 L26 256" stroke="green" stroke-width="2" fill="none"/>
+    </svg>
+  </div>
+
+  <!-- Sağ dekor SVG -->
+  <div class="right-decor">
+    <svg viewBox="0 0 64 256" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+      <path d="M32 0 L28 64 L36 128 L32 192 L38 256" stroke="green" stroke-width="2" fill="none"/>
+    </svg>
+  </div>
+
   <h1>Şiir Sesleri</h1>
 
   <div class="poem-card">
