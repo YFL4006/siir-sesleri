@@ -1,127 +1,132 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <title>Şiir Sesleri</title>
-  <style>
-    /* Genel stil */
-    body {
-      background-color: #fdf6e3; /* pastel kağıt rengi */
-      font-family: 'Georgia', serif;
-      color: #333;
-      text-align: center;
-      padding: 50px 20px;
-      margin: 0;
-      position: relative;
-      overflow-x: hidden;
-    }
 
-    /* Sol dekor (leaves) */
-    .left-decor {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 120px;
-      height: 100%;
-      opacity: 0.2;
-      z-index: 0;
-      background-image: url('dekorasyon/left_leaves.png');
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: top;
-    }
+<meta charset="UTF-8">
+<title>Şiir Sesleri</title>
 
-    /* Sağ dekor (sarmaşık) */
-    .right-decor {
-      position: fixed;
-      top: 0;
-      right: 0;
-      width: 120px;
-      height: 100%;
-      opacity: 0.2;
-      z-index: 0;
-      background-image: url('dekorasyon/right_plant.png');
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: top;
-    }
+<style>
 
-    /* Başlık */
-    h1 {
-      font-size: 3em;
-      margin-bottom: 40px;
-      font-style: italic;
-      color: #5a3e36;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-      position: relative;
-      z-index: 1;
-    }
+body{
+    margin:0;
+    padding:60px 20px;
+    background:#fdf6e3;
+    font-family:Georgia, serif;
+    text-align:center;
+    color:#3b2f2f;
+    overflow-x:hidden;
+}
 
-    /* Şiir kartı */
-    .poem-card {
-      background-color: #fff8f0;
-      border: 1px solid #e2d8c3;
-      border-radius: 12px;
-      width: 340px;
-      margin: 0 auto;
-      padding: 30px 25px;
-      box-shadow: 2px 2px 12px rgba(0,0,0,0.1);
-      transition: transform 0.2s, box-shadow 0.2s;
-      position: relative;
-      z-index: 1;
-    }
-    .poem-card:hover {
-      transform: scale(1.03);
-      box-shadow: 4px 4px 15px rgba(0,0,0,0.2);
-    }
+/* SOL YAPRAKLAR */
 
-    h2 {
-      font-size: 1.6em;
-      margin-bottom: 20px;
-      color: #6b4c3b;
-    }
+.left-decor{
+    position:fixed;
+    left:0;
+    top:0;
+    width:140px;
+    height:100%;
+    background:url("left_leaves.png");
+    background-size:contain;
+    background-repeat:no-repeat;
+    background-position:left top;
+    opacity:0.25;
+}
 
-    audio {
-      width: 100%;
-      margin-top: 15px;
-    }
+/* SAĞ SARMAŞIK */
 
-    footer {
-      margin-top: 50px;
-      font-size: 0.95em;
-      color: #888;
-      position: relative;
-      z-index: 1;
-    }
+.right-decor{
+    position:fixed;
+    right:0;
+    top:0;
+    width:140px;
+    height:100%;
+    background:url("right_plant.png");
+    background-size:contain;
+    background-repeat:no-repeat;
+    background-position:right top;
+    opacity:0.25;
+}
 
-    /* Responsive */
-    @media screen and (max-width: 500px) {
-      .poem-card { width: 90%; padding: 20px; }
-      h1 { font-size: 2.2em; }
-      h2 { font-size: 1.3em; }
-      .left-decor, .right-decor { width: 60px; }
-    }
-  </style>
+/* BAŞLIK */
+
+h1{
+    font-size:3em;
+    margin-bottom:10px;
+    color:#5a3e36;
+}
+
+/* YUNUS EMRE ALINTISI */
+
+.quote{
+    font-style:italic;
+    margin-bottom:40px;
+    color:#6b4c3b;
+    font-size:1.2em;
+}
+
+/* ŞİİR KARTI */
+
+.poem-card{
+    background:#fff8f0;
+    width:340px;
+    margin:auto;
+    padding:30px;
+    border-radius:14px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.1);
+    transition:0.2s;
+}
+
+.poem-card:hover{
+    transform:scale(1.03);
+    box-shadow:0 6px 20px rgba(0,0,0,0.2);
+}
+
+h2{
+    color:#6b4c3b;
+}
+
+audio{
+    width:100%;
+    margin-top:15px;
+}
+
+/* ALT YAZI */
+
+footer{
+    margin-top:60px;
+    font-size:0.9em;
+    color:#777;
+}
+
+</style>
+
 </head>
+
 <body>
 
-  <!-- Dekorasyonlar -->
-  <div class="left-decor"></div>
-  <div class="right-decor"></div>
+<div class="left-decor"></div>
+<div class="right-decor"></div>
 
-  <!-- Başlık -->
-  <h1>Şiir Sesleri</h1>
+<h1>Şiir Sesleri</h1>
 
-  <!-- Şiir Kartı -->
-  <div class="poem-card">
-    <h2>İstiklal Marşı</h2>
-    <audio controls>
-      <source src="siirler/istiklalmarsi.mp3" type="audio/mpeg">
-    </audio>
-  </div>
+<div class="quote">
+“Sevelim sevilelim, dünya kimseye kalmaz.” <br>
+— Yunus Emre
+</div>
 
-  <!-- Alt bilgi -->
-  <footer>Yunus Emre ruhunu anan şiir sesleri</footer>
+<div class="poem-card">
+
+<h2>İstiklal Marşı</h2>
+
+<audio controls>
+<source src="istiklalmarsi.mp3" type="audio/mpeg">
+</audio>
+
+</div>
+
+<footer>
+Yunus Emre temalı şiir sesleri projesi
+</footer>
 
 </body>
 </html>
