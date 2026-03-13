@@ -14,98 +14,59 @@ body{
     font-family:Georgia, serif;
     text-align:center;
     color:#3b2f2f;
-    overflow-x:hidden;
 }
-
-/* SOL YAPRAKLAR */
-
-.left-decor{
-    position:fixed;
-    left:0;
-    top:0;
-    width:140px;
-    height:100%;
-    background:url("left_leaves.png");
-    background-size:contain;
-    background-repeat:no-repeat;
-    background-position:left top;
-    opacity:0.25;
-}
-
-/* SAĞ SARMAŞIK */
-
-.right-decor{
-    position:fixed;
-    right:0;
-    top:0;
-    width:140px;
-    height:100%;
-    background:url("right_plant.png");
-    background-size:contain;
-    background-repeat:no-repeat;
-    background-position:right top;
-    opacity:0.25;
-}
-
-/* BAŞLIK */
 
 h1{
     font-size:3em;
     margin-bottom:10px;
-    color:#5a3e36;
 }
-
-/* YUNUS EMRE ALINTISI */
 
 .quote{
     font-style:italic;
     margin-bottom:40px;
-    color:#6b4c3b;
-    font-size:1.2em;
 }
-
-/* ŞİİR KARTI */
 
 .poem-card{
     background:#fff8f0;
-    width:340px;
+    width:360px;
     margin:auto;
     padding:30px;
     border-radius:14px;
     box-shadow:0 4px 15px rgba(0,0,0,0.1);
-    transition:0.2s;
 }
 
-.poem-card:hover{
-    transform:scale(1.03);
-    box-shadow:0 6px 20px rgba(0,0,0,0.2);
-}
-
-h2{
+.poem-title{
+    cursor:pointer;
     color:#6b4c3b;
 }
 
-audio{
-    width:100%;
-    margin-top:15px;
-}
+/* ŞİİR BAŞTA GİZLİ */
 
-/* ALT YAZI */
-
-footer{
-    margin-top:60px;
-    font-size:0.9em;
-    color:#777;
+.poem-text{
+    display:none;
+    margin-top:20px;
+    white-space:pre-line;
 }
 
 </style>
 
+<script>
+
+function siirGoster(){
+    let siir = document.getElementById("siir");
+
+    if(siir.style.display=="none"){
+        siir.style.display="block";
+    }else{
+        siir.style.display="none";
+    }
+}
+
+</script>
+
 </head>
 
 <body>
-
-<div class="left-decor"></div>
-<div class="right-decor"></div>
 
 <h1>Şiir Sesleri</h1>
 
@@ -116,17 +77,20 @@ footer{
 
 <div class="poem-card">
 
-<h2>İstiklal Marşı</h2>
+<h2 class="poem-title" onclick="siirGoster()">
+İstiklal Marşı
+</h2>
 
-<audio controls>
-<source src="istiklalmarsi.mp3" type="audio/mpeg">
-</audio>
+<div id="siir" class="poem-text">
+
+Korkma, sönmez bu şafaklarda yüzen al sancak;  
+Sönmeden yurdumun üstünde tüten en son ocak.  
+O benim milletimin yıldızıdır, parlayacak;  
+O benimdir, o benim milletimindir ancak.
 
 </div>
 
-<footer>
-Yunus Emre temalı şiir sesleri projesi
-</footer>
+</div>
 
 </body>
 </html>
