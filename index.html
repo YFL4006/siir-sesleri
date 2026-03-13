@@ -16,14 +16,14 @@ body{
     color:#3b2f2f;
     position:relative;
 
+    /* bitkiler tekrar ediyor */
     background-image: url("left_leaves.png"), url("right_plant.png");
-    background-repeat: repeat-y, no-repeat; /* sağ artık tekrar etmiyor */
+    background-repeat: repeat-y, repeat-y;
     background-position: left top, right top;
+    background-size: 160px auto, 160px auto;
 
-    /* sol ve sağ bitkilerin boyutu */
-    background-size: 160px auto, 160px 100vh; 
-    /* left_leaves: genişlik 160px, yüksekliği otomatik
-       right_plant: genişlik 160px, yüksekliği tüm viewport yüksekliği */
+    /* sabit yap, scroll edince bozulmasın */
+    background-attachment: fixed, fixed;
 }
 
 /* saydam Yunus Emre arka plan */
