@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="tr">
 <head>
 
@@ -16,12 +17,12 @@ body{
     color:#3b2f2f;
     position:relative;
 
-    /* Sol ve sağ yapraklar */
-    background-image: url("left_leaves.png"), url("right_leaves_transparent.png");
-    background-repeat: repeat-y, repeat-y;
-    background-position: left top, right top;
-    background-size: 160px auto, 160px auto;
-    background-attachment: fixed, fixed;
+    /* SADECE sol yaprak arka planı */
+    background-image: url("left_leaves.png");
+    background-repeat: repeat-y;
+    background-position: left top;
+    background-size: 160px auto;
+    background-attachment: fixed;
 }
 
 /* saydam Yunus Emre arka plan */
@@ -53,7 +54,6 @@ h1{
     margin-bottom:40px;
 }
 
-/* şiir kartı */
 .poem-card{
     background:#fff8f0;
     width:600px;
@@ -64,7 +64,6 @@ h1{
     transition:0.3s;
 }
 
-/* hover efekti */
 .poem-card:hover{
     transform:scale(1.03);
 }
@@ -83,7 +82,6 @@ h1{
     transition:transform 0.3s;
 }
 
-/* şiir metni */
 .poem-text{
     display:none;
     margin-top:20px;
@@ -97,7 +95,6 @@ h1{
     display:block;
 }
 
-/* açılma animasyonu */
 @keyframes fade{
     from{
         opacity:0;
@@ -109,14 +106,12 @@ h1{
     }
 }
 
-/* ses çalar stil */
 audio{
     margin-top:15px;
     width:100%;
     border-radius:10px;
 }
 
-/* footer */
 footer{
     margin-top:60px;
     font-size:14px;
@@ -155,7 +150,6 @@ Sönmeden yurdumun üstünde tüten en son ocak.
 O benim milletimin yıldızıdır, parlayacak;
 O benimdir, o benim milletimindir ancak.
 
-
 Çatma, kurban olayım çehreni ey nazlı hilâl!
 Kahraman ırkıma bir gül… ne bu şiddet bu celâl?
 Sana olmaz dökülen kanlarımız sonra helâl,
@@ -186,10 +180,10 @@ ok.style.transform="rotate(0deg)";
 
 }
 
-/* Tek yaprak resmini sol şerit içinde rastgele yerleştirme */
+/* Yaprakları SAĞ şerit içinde rastgele yerleştirme */
 
-const leafCount = 45; // yaprak sayısı
-const stripWidth = 160; // sol yaprak şeridinin genişliği
+const leafCount = 65;
+const stripWidth = 160;
 
 for(let i=0;i<leafCount;i++){
 
@@ -198,20 +192,15 @@ for(let i=0;i<leafCount;i++){
 
     leaf.style.position = "fixed";
 
-    // küçük boyut
-    leaf.style.width = (25 + Math.random()*20) + "px";
+    leaf.style.width = (18 + Math.random()*18) + "px";
 
-    // sadece sol şerit içinde
-    leaf.style.left = Math.random()*stripWidth + "px";
+    leaf.style.left = (window.innerWidth - stripWidth + Math.random()*stripWidth) + "px";
 
-    // ekran boyunca rastgele
     leaf.style.top = Math.random()*100 + "vh";
 
-    // rastgele döndürme
     leaf.style.transform = `rotate(${Math.random()*360}deg)`;
 
-    // saydamlık
-    leaf.style.opacity = Math.random()*0.4 + 0.4;
+    leaf.style.opacity = Math.random()*0.7 + 0.2;
 
     leaf.style.pointerEvents = "none";
 
