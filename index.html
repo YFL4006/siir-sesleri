@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="tr">
 <head>
 
@@ -40,29 +41,17 @@ h1{
     color:#6b4c3b;
 }
 
-/* ŞİİR BAŞTA GİZLİ */
-
 .poem-text{
     display:none;
     margin-top:20px;
     white-space:pre-line;
 }
 
-</style>
-
-<script>
-
-function siirGoster(){
-    let siir = document.getElementById("siir");
-
-    if(siir.style.display=="none"){
-        siir.style.display="block";
-    }else{
-        siir.style.display="none";
-    }
+.poem-text.active{
+    display:block;
 }
 
-</script>
+</style>
 
 </head>
 
@@ -78,19 +67,31 @@ function siirGoster(){
 <div class="poem-card">
 
 <h2 class="poem-title" onclick="siirGoster()">
-İstiklal Marşı
+Şiir Başlığı
 </h2>
 
 <div id="siir" class="poem-text">
 
-Korkma, sönmez bu şafaklarda yüzen al sancak;  
-Sönmeden yurdumun üstünde tüten en son ocak.  
-O benim milletimin yıldızıdır, parlayacak;  
+Korkma, sönmez bu şafaklarda yüzen al sancak;
+Sönmeden yurdumun üstünde tüten en son ocak.
+O benim milletimin yıldızıdır, parlayacak;
 O benimdir, o benim milletimindir ancak.
+Çatma, kurban olayım çehreni ey nazlı hilâl!
+Kahraman ırkıma bir gül… ne bu şiddet bu celâl?
+Sana olmaz dökülen kanlarımız sonra helâl,
+Hakkıdır, Hakk’a tapan, milletimin istiklâl.
 
 </div>
 
 </div>
+
+<script>
+
+function siirGoster(){
+    document.getElementById("siir").classList.toggle("active");
+}
+
+</script>
 
 </body>
 </html>
