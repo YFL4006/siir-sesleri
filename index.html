@@ -181,16 +181,21 @@ ok.style.transform="rotate(0deg)";
 
 const leafCount = 65;
 const stripWidth = 160;
+const leafWidth = 50; 
+const leafHeight = 55; // yaklaşık yaprak yüksekliği
 const screenHeight = window.innerHeight;
+
+// ekran yüksekliği yetersizse yaprak sayısını azaltabiliriz
+let spacing = screenHeight / leafCount;
 
 for(let i=0; i<leafCount; i++){
     const leaf = document.createElement("img");
     leaf.src = "leafbg.png";
 
     leaf.style.position = "fixed";
-    leaf.style.width = "50px";
+    leaf.style.width = leafWidth + "px";
     leaf.style.right = Math.random() * stripWidth + "px";
-    leaf.style.top = (i * (screenHeight / leafCount) + (Math.random()*10 -5)) + "px";
+    leaf.style.top = (i * spacing) + "px"; // eşit aralıklarla
     leaf.style.transform = `rotate(${Math.random()*360}deg)`;
     leaf.style.opacity = 1;
     leaf.style.pointerEvents = "none";
