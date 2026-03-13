@@ -42,6 +42,17 @@ h1{font-size:3em;margin-bottom:10px;letter-spacing:2px;text-shadow:1px 1px 3px r
 @keyframes fade{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}
 audio{margin-top:15px;width:100%;border-radius:10px;}
 footer{margin-top:60px;font-size:14px;color:#6b4c3b;}
+
+/* Yaprak animasyonu */
+@keyframes sway {
+  0% { transform: translateY(0) rotate(0deg);}
+  50% { transform: translateY(5px) rotate(180deg);}
+  100% { transform: translateY(0) rotate(360deg);}
+}
+
+.falling-leaf {
+  animation: sway 5s infinite ease-in-out;
+}
 </style>
 </head>
 
@@ -100,28 +111,30 @@ let spacing = screenHeight / leafCount;
 // Sol şerit yaprakları
 for(let i=0;i<leafCount;i++){
     const leaf = document.createElement("img");
-    leaf.src = "leafbg2.png";
+    leaf.src = "leafbg2.png"; // sol taraf yaprak resmi
     leaf.style.position="fixed";
     leaf.style.width=leafWidth+"px";
     leaf.style.left = Math.random()*stripWidth + "px"; // sol şerit
     leaf.style.top = (i*spacing + (Math.random()*5-2.5)) + "px";
-    leaf.style.transform = `rotate(${Math.random()*360}deg)`;
     leaf.style.opacity = 1;
     leaf.style.pointerEvents = "none";
+    leaf.classList.add("falling-leaf");
+    leaf.style.animationDelay = (Math.random()*5)+"s"; // farklı animasyon başlangıcı
     document.body.appendChild(leaf);
 }
 
 // Sağ şerit yaprakları
 for(let i=0;i<leafCount;i++){
     const leaf = document.createElement("img");
-    leaf.src = "leafbg.png";
+    leaf.src = "leaf.png"; // sağ taraf yaprak resmi
     leaf.style.position="fixed";
     leaf.style.width=leafWidth+"px";
     leaf.style.right = Math.random()*stripWidth + "px"; // sağ şerit
     leaf.style.top = (i*spacing + (Math.random()*5-2.5)) + "px";
-    leaf.style.transform = `rotate(${Math.random()*360}deg)`;
     leaf.style.opacity = 1;
     leaf.style.pointerEvents = "none";
+    leaf.classList.add("falling-leaf");
+    leaf.style.animationDelay = (Math.random()*5)+"s";
     document.body.appendChild(leaf);
 }
 </script>
