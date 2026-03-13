@@ -186,18 +186,35 @@ ok.style.transform="rotate(0deg)";
 
 }
 
-/* Tek yaprak resmini rastgele yerleştirme */
-const leafCount = 45; // yaprak sayısı artırıldı
+/* Tek yaprak resmini sol şerit içinde rastgele yerleştirme */
+
+const leafCount = 45; // yaprak sayısı
+const stripWidth = 160; // sol yaprak şeridinin genişliği
+
 for(let i=0;i<leafCount;i++){
+
     const leaf = document.createElement("img");
-    leaf.src = "leaf.png"; // buraya kendi yaprak resmini koy
+    leaf.src = "leafbg.png";
+
     leaf.style.position = "fixed";
-    leaf.style.width = "160px"; // genişlik sol yapraklarla aynı
-    leaf.style.top = Math.random()*80 + "vh"; // dikey rastgele
-    leaf.style.left = Math.random()*90 + "vw"; // yatay rastgele
-    leaf.style.transform = `rotate(${Math.random()*360}deg)`; // rastgele açı
-    leaf.style.opacity = Math.random()*0.6 + 0.4; // saydamlık
-    leaf.style.pointerEvents = "none"; // tıklamayı engelle
+
+    // küçük boyut
+    leaf.style.width = (25 + Math.random()*20) + "px";
+
+    // sadece sol şerit içinde
+    leaf.style.left = Math.random()*stripWidth + "px";
+
+    // ekran boyunca rastgele
+    leaf.style.top = Math.random()*100 + "vh";
+
+    // rastgele döndürme
+    leaf.style.transform = `rotate(${Math.random()*360}deg)`;
+
+    // saydamlık
+    leaf.style.opacity = Math.random()*0.4 + 0.4;
+
+    leaf.style.pointerEvents = "none";
+
     document.body.appendChild(leaf);
 }
 
