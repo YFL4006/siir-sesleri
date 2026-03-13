@@ -19,10 +19,12 @@ body{
     background-image: url("left_leaves.png"), url("right_plant.png");
     background-repeat: repeat-y, repeat-y;
     background-position: left top, right top;
-    background-size: 200px auto, 120px auto;
+
+    /* bitkilerin düzeltilmiş boyutu */
+    background-size: 160px auto, 160px auto;
 }
 
-/* Saydam Yunus Emre arka planı */
+/* saydam Yunus Emre arka plan */
 body::before{
     content:"";
     position:fixed;
@@ -39,6 +41,7 @@ body::before{
     background-size:contain;
 
     opacity:0.15;
+
     z-index:-1;
 }
 
