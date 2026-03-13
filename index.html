@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="tr">
 <head>
 
@@ -25,7 +24,6 @@ body{
     background-attachment: fixed;
 }
 
-/* saydam Yunus Emre arka plan */
 body::before{
     content:"";
     position:fixed;
@@ -180,39 +178,26 @@ ok.style.transform="rotate(0deg)";
 
 }
 
-/* Yaprakları sağ şerit içinde daha düzenli yerleştirme */
+/* Yaprakları sağ şerit içinde rastgele yerleştirme */
 
 const leafCount = 65;
 const stripWidth = 160;
 
-for(let i=0;i<leafCount;i++){
+for(let i=0; i<leafCount; i++){
 
-```
-const leaf = document.createElement("img");
-leaf.src = "leafbg.png";
+    const leaf = document.createElement("img");
+    leaf.src = "leafbg.png";
 
-leaf.style.position = "fixed";
+    leaf.style.position = "fixed";
 
-/* daha büyük boyut */
-leaf.style.width = (40 + Math.random()*10) + "px";
+    leaf.style.width = "50px"; // hepsi aynı boyutta
+    leaf.style.right = Math.random()*stripWidth + "px"; // sağ tarafta
+    leaf.style.top = Math.random()*100 + "vh"; // dikey rastgele
+    leaf.style.transform = `rotate(${Math.random()*360}deg)`;
+    leaf.style.opacity = 1; // opak
+    leaf.style.pointerEvents = "none";
 
-/* sağ şerit */
-leaf.style.left = (window.innerWidth - stripWidth + Math.random()*stripWidth) + "px";
-
-/* üst üste binmemesi için dikey dağıtma */
-leaf.style.top = (i * (100/leafCount)) + "vh";
-
-/* hafif rastgele açı */
-leaf.style.transform = `rotate(${Math.random()*360}deg)`;
-
-/* daha az saydam */
-leaf.style.opacity = 1;
-
-leaf.style.pointerEvents = "none";
-
-document.body.appendChild(leaf);
-```
-
+    document.body.appendChild(leaf);
 }
 
 </script>
