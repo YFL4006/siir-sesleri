@@ -48,6 +48,8 @@ body::before{
 h1{
     font-size:3em;
     margin-bottom:10px;
+    letter-spacing:2px;
+    text-shadow:1px 1px 3px rgba(0,0,0,0.2);
 }
 
 .quote{
@@ -55,6 +57,7 @@ h1{
     margin-bottom:40px;
 }
 
+/* şiir kartı */
 .poem-card{
     background:#fff8f0;
     width:600px;
@@ -62,6 +65,12 @@ h1{
     padding:30px;
     border-radius:14px;
     box-shadow:0 4px 15px rgba(0,0,0,0.1);
+    transition:0.3s;
+}
+
+/* hover efekti */
+.poem-card:hover{
+    transform:scale(1.03);
 }
 
 .poem-title{
@@ -78,21 +87,44 @@ h1{
     transition:transform 0.3s;
 }
 
+/* şiir metni */
 .poem-text{
     display:none;
     margin-top:20px;
     white-space:pre-line;
     font-weight:bold;
     font-style:italic;
+    animation:fade 0.6s;
 }
 
 .poem-text.active{
     display:block;
 }
 
+/* açılma animasyonu */
+@keyframes fade{
+    from{
+        opacity:0;
+        transform:translateY(-10px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* ses çalar stil */
 audio{
     margin-top:15px;
     width:100%;
+    border-radius:10px;
+}
+
+/* footer */
+footer{
+    margin-top:60px;
+    font-size:14px;
+    color:#6b4c3b;
 }
 
 </style>
@@ -136,6 +168,10 @@ Hakkıdır, Hakk’a tapan, milletimin istiklâl.
 </div>
 
 </div>
+
+<footer>
+© 2026 Şiir Sesleri
+</footer>
 
 <script>
 
