@@ -16,7 +16,6 @@ body{
     color:#3b2f2f;
     position:relative;
 
-    /* SADECE sol yaprak arka planı */
     background-image: url("left_leaves.png");
     background-repeat: repeat-y;
     background-position: left top;
@@ -178,23 +177,22 @@ ok.style.transform="rotate(0deg)";
 
 }
 
-/* Yaprakları sağ şerit içinde rastgele yerleştirme */
+// Yapraklar
 
 const leafCount = 65;
 const stripWidth = 160;
+const screenHeight = window.innerHeight;
 
 for(let i=0; i<leafCount; i++){
-
     const leaf = document.createElement("img");
     leaf.src = "leafbg.png";
 
     leaf.style.position = "fixed";
-
-    leaf.style.width = "50px"; // hepsi aynı boyutta
-    leaf.style.right = Math.random()*stripWidth + "px"; // sağ tarafta
-    leaf.style.top = Math.random()*100 + "vh"; // dikey rastgele
+    leaf.style.width = "50px";
+    leaf.style.right = Math.random() * stripWidth + "px";
+    leaf.style.top = (i * (screenHeight / leafCount) + (Math.random()*10 -5)) + "px";
     leaf.style.transform = `rotate(${Math.random()*360}deg)`;
-    leaf.style.opacity = 1; // opak
+    leaf.style.opacity = 1;
     leaf.style.pointerEvents = "none";
 
     document.body.appendChild(leaf);
