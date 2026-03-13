@@ -1,12 +1,9 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-
 <meta charset="UTF-8">
 <title>Şiir Sesleri</title>
-
 <style>
-
 body{
     margin:0;
     padding:60px 20px;
@@ -15,8 +12,6 @@ body{
     text-align:center;
     color:#3b2f2f;
     position:relative;
-
-    /* Sol yaprak arka planı kaldırıldı */
     background-image: none;
 }
 
@@ -36,88 +31,21 @@ body::before{
     z-index:-1;
 }
 
-h1{
-    font-size:3em;
-    margin-bottom:10px;
-    letter-spacing:2px;
-    text-shadow:1px 1px 3px rgba(0,0,0,0.2);
-}
-
-.quote{
-    font-style:italic;
-    margin-bottom:40px;
-}
-
-.poem-card{
-    background:#fff8f0;
-    width:600px;
-    margin:auto;
-    padding:30px;
-    border-radius:14px;
-    box-shadow:0 4px 15px rgba(0,0,0,0.1);
-    transition:0.3s;
-}
-
-.poem-card:hover{
-    transform:scale(1.03);
-}
-
-.poem-title{
-    cursor:pointer;
-    color:#6b4c3b;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:10px;
-}
-
-.arrow{
-    font-size:18px;
-    transition:transform 0.3s;
-}
-
-.poem-text{
-    display:none;
-    margin-top:20px;
-    white-space:pre-line;
-    font-weight:bold;
-    font-style:italic;
-    animation:fade 0.6s;
-}
-
-.poem-text.active{
-    display:block;
-}
-
-@keyframes fade{
-    from{
-        opacity:0;
-        transform:translateY(-10px);
-    }
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
-}
-
-audio{
-    margin-top:15px;
-    width:100%;
-    border-radius:10px;
-}
-
-footer{
-    margin-top:60px;
-    font-size:14px;
-    color:#6b4c3b;
-}
-
+h1{font-size:3em;margin-bottom:10px;letter-spacing:2px;text-shadow:1px 1px 3px rgba(0,0,0,0.2);}
+.quote{font-style:italic;margin-bottom:40px;}
+.poem-card{background:#fff8f0;width:600px;margin:auto;padding:30px;border-radius:14px;box-shadow:0 4px 15px rgba(0,0,0,0.1);transition:0.3s;}
+.poem-card:hover{transform:scale(1.03);}
+.poem-title{cursor:pointer;color:#6b4c3b;display:flex;justify-content:center;align-items:center;gap:10px;}
+.arrow{font-size:18px;transition:transform 0.3s;}
+.poem-text{display:none;margin-top:20px;white-space:pre-line;font-weight:bold;font-style:italic;animation:fade 0.6s;}
+.poem-text.active{display:block;}
+@keyframes fade{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}
+audio{margin-top:15px;width:100%;border-radius:10px;}
+footer{margin-top:60px;font-size:14px;color:#6b4c3b;}
 </style>
-
 </head>
 
 <body>
-
 <h1>Şiir Sesleri</h1>
 
 <div class="quote">
@@ -126,14 +54,11 @@ footer{
 </div>
 
 <div class="poem-card">
-
 <h2 class="poem-title" onclick="siirGoster()">
 İstiklal Marşı
 <span id="ok" class="arrow">▼</span>
 </h2>
-
 <div id="siir" class="poem-text">
-
 <audio controls>
 <source src="istiklalmarsi.mp3" type="audio/mpeg">
 Tarayıcınız ses oynatmayı desteklemiyor.
@@ -148,55 +73,57 @@ O benimdir, o benim milletimindir ancak.
 Kahraman ırkıma bir gül… ne bu şiddet bu celâl?
 Sana olmaz dökülen kanlarımız sonra helâl,
 Hakkıdır, Hakk’a tapan, milletimin istiklâl.
-
+</div>
 </div>
 
-</div>
-
-<footer>
-© 2026 Şiir Sesleri
-</footer>
+<footer>© 2026 Şiir Sesleri</footer>
 
 <script>
-
 function siirGoster(){
-
-let siir = document.getElementById("siir");
-let ok = document.getElementById("ok");
-
-siir.classList.toggle("active");
-
-if(siir.classList.contains("active")){
-ok.style.transform="rotate(180deg)";
-}else{
-ok.style.transform="rotate(0deg)";
+    let siir = document.getElementById("siir");
+    let ok = document.getElementById("ok");
+    siir.classList.toggle("active");
+    if(siir.classList.contains("active")){
+        ok.style.transform="rotate(180deg)";
+    }else{
+        ok.style.transform="rotate(0deg)";
+    }
 }
 
-}
-
-// Yaprakları sol şeritte eşit aralıklarla yerleştirme
+// Yaprak ayarları
 const leafCount = 65;
 const stripWidth = 160;
-const leafWidth = 50; 
-const leafHeight = 55; 
+const leafWidth = 50;
 const screenHeight = window.innerHeight;
 let spacing = screenHeight / leafCount;
 
-for(let i=0; i<leafCount; i++){
+// Sol şerit yaprakları
+for(let i=0;i<leafCount;i++){
     const leaf = document.createElement("img");
-    leaf.src = "leafbg2.png"; // sol şerit yaprağı
-
-    leaf.style.position = "fixed";
-    leaf.style.width = leafWidth + "px";
-    leaf.style.left = Math.random() * stripWidth + "px"; // sol şerit
-    leaf.style.top = (i * spacing + (Math.random()*5 - 2.5)) + "px"; // hafif rastgele sapma
+    leaf.src = "leafbg2.png";
+    leaf.style.position="fixed";
+    leaf.style.width=leafWidth+"px";
+    leaf.style.left = Math.random()*stripWidth + "px"; // sol şerit
+    leaf.style.top = (i*spacing + (Math.random()*5-2.5)) + "px";
     leaf.style.transform = `rotate(${Math.random()*360}deg)`;
     leaf.style.opacity = 1;
     leaf.style.pointerEvents = "none";
-
     document.body.appendChild(leaf);
 }
 
+// Sağ şerit yaprakları
+for(let i=0;i<leafCount;i++){
+    const leaf = document.createElement("img");
+    leaf.src = "leaf.png";
+    leaf.style.position="fixed";
+    leaf.style.width=leafWidth+"px";
+    leaf.style.right = Math.random()*stripWidth + "px"; // sağ şerit
+    leaf.style.top = (i*spacing + (Math.random()*5-2.5)) + "px";
+    leaf.style.transform = `rotate(${Math.random()*360}deg)`;
+    leaf.style.opacity = 1;
+    leaf.style.pointerEvents = "none";
+    document.body.appendChild(leaf);
+}
 </script>
 
 </body>
