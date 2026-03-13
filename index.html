@@ -180,31 +180,39 @@ ok.style.transform="rotate(0deg)";
 
 }
 
-/* Yaprakları SAĞ şerit içinde rastgele yerleştirme */
+/* Yaprakları sağ şerit içinde daha düzenli yerleştirme */
 
 const leafCount = 65;
 const stripWidth = 160;
 
 for(let i=0;i<leafCount;i++){
 
-    const leaf = document.createElement("img");
-    leaf.src = "leafbg.png";
+```
+const leaf = document.createElement("img");
+leaf.src = "leafbg.png";
 
-    leaf.style.position = "fixed";
+leaf.style.position = "fixed";
 
-    leaf.style.width = (26 + Math.random()*4) + "px";
+/* daha büyük boyut */
+leaf.style.width = (40 + Math.random()*10) + "px";
 
-    leaf.style.left = (window.innerWidth - stripWidth + Math.random()*stripWidth) + "px";
+/* sağ şerit */
+leaf.style.left = (window.innerWidth - stripWidth + Math.random()*stripWidth) + "px";
 
-    leaf.style.top = Math.random()*100 + "vh";
+/* üst üste binmemesi için dikey dağıtma */
+leaf.style.top = (i * (100/leafCount)) + "vh";
 
-    leaf.style.transform = `rotate(${Math.random()*360}deg)`;
+/* hafif rastgele açı */
+leaf.style.transform = `rotate(${Math.random()*360}deg)`;
 
-    leaf.style.opacity = 1;
+/* daha az saydam */
+leaf.style.opacity = 1;
 
-    leaf.style.pointerEvents = "none";
+leaf.style.pointerEvents = "none";
 
-    document.body.appendChild(leaf);
+document.body.appendChild(leaf);
+```
+
 }
 
 </script>
