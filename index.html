@@ -21,8 +21,6 @@ body{
     background-repeat: repeat-y, repeat-y;
     background-position: left top, right top;
     background-size: 160px auto, 160px auto;
-
-    /* Sabit kalsın, scroll edince bozulmasın */
     background-attachment: fixed, fixed;
 }
 
@@ -33,17 +31,13 @@ body::before{
     top:50%;
     left:50%;
     transform:translate(-50%,-50%);
-
     width:1000px;
     height:1000px;
-
     background-image:url("yunusemre.png");
     background-repeat:no-repeat;
     background-position:center;
     background-size:contain;
-
     opacity:0.15;
-
     z-index:-1;
 }
 
@@ -190,6 +184,21 @@ ok.style.transform="rotate(180deg)";
 ok.style.transform="rotate(0deg)";
 }
 
+}
+
+/* Tek yaprak resmini rastgele yerleştirme */
+const leafCount = 45; // yaprak sayısı artırıldı
+for(let i=0;i<leafCount;i++){
+    const leaf = document.createElement("img");
+    leaf.src = "leaf.png"; // buraya kendi yaprak resmini koy
+    leaf.style.position = "fixed";
+    leaf.style.width = "160px"; // genişlik sol yapraklarla aynı
+    leaf.style.top = Math.random()*80 + "vh"; // dikey rastgele
+    leaf.style.left = Math.random()*90 + "vw"; // yatay rastgele
+    leaf.style.transform = `rotate(${Math.random()*360}deg)`; // rastgele açı
+    leaf.style.opacity = Math.random()*0.6 + 0.4; // saydamlık
+    leaf.style.pointerEvents = "none"; // tıklamayı engelle
+    document.body.appendChild(leaf);
 }
 
 </script>
