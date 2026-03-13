@@ -128,15 +128,19 @@ for(let i=0;i<leafCount;i++){
 // Sağ şerit yaprakları
 for(let i=0;i<leafCount;i++){
     const leaf = document.createElement("img");
-    leaf.src = "leafbg.png"; // sağ taraf yaprak
+    leaf.src = "leafbg.png"; // sağ yaprak
     leaf.style.position="fixed";
-    leaf.style.width=leafWidth+"px";
-    leaf.style.right = Math.random()*stripWidth + "px";
+    leaf.style.width = leafWidth + "px";
+    leaf.style.right = Math.random() * stripWidth + "px";
     leaf.style.top = (i*spacing + (Math.random()*5-2.5)) + "px";
     leaf.style.opacity = 1;
     leaf.style.pointerEvents = "none";
     leaf.classList.add("falling-leaf");
-    leaf.style.animationDelay = (Math.random()*6)+"s";
+    leaf.style.animationDelay = (Math.random()*5)+"s";
+    
+    // Sağ yaprakları 90 derece sağa döndür
+    leaf.style.transform += " rotate(90deg)";
+    
     document.body.appendChild(leaf);
 }
 </script>
