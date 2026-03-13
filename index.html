@@ -43,17 +43,17 @@ h1{font-size:3em;margin-bottom:10px;letter-spacing:2px;text-shadow:1px 1px 3px r
 audio{margin-top:15px;width:100%;border-radius:10px;}
 footer{margin-top:60px;font-size:14px;color:#6b4c3b;}
 
-/* Yaprak animasyonu: hafif sallanma + yukarı-aşağı hareket */
+/* Hafif sallanma animasyonu */
 @keyframes sway {
   0% { transform: translateX(0) translateY(0) rotate(0deg);}
-  25% { transform: translateX(5px) translateY(5px) rotate(15deg);}
-  50% { transform: translateX(0) translateY(10px) rotate(0deg);}
-  75% { transform: translateX(-5px) translateY(5px) rotate(-15deg);}
+  25% { transform: translateX(2px) translateY(3px) rotate(5deg);}
+  50% { transform: translateX(0) translateY(5px) rotate(0deg);}
+  75% { transform: translateX(-2px) translateY(3px) rotate(-5deg);}
   100% { transform: translateX(0) translateY(0) rotate(0deg);}
 }
 
 .falling-leaf {
-  animation: sway 6s infinite ease-in-out;
+  animation: sway 8s infinite ease-in-out;
 }
 </style>
 </head>
@@ -113,7 +113,7 @@ let spacing = screenHeight / leafCount;
 // Sol şerit yaprakları
 for(let i=0;i<leafCount;i++){
     const leaf = document.createElement("img");
-    leaf.src = "leafbg2.png"; // sol taraf yaprak
+    leaf.src = "leafbg2.png";
     leaf.style.position="fixed";
     leaf.style.width=leafWidth+"px";
     leaf.style.left = Math.random()*stripWidth + "px";
@@ -121,14 +121,14 @@ for(let i=0;i<leafCount;i++){
     leaf.style.opacity = 1;
     leaf.style.pointerEvents = "none";
     leaf.classList.add("falling-leaf");
-    leaf.style.animationDelay = (Math.random()*6)+"s";
+    leaf.style.animationDelay = (Math.random()*8)+"s";
     document.body.appendChild(leaf);
 }
 
 // Sağ şerit yaprakları
 for(let i=0;i<leafCount;i++){
     const leaf = document.createElement("img");
-    leaf.src = "leafbg.png"; // sağ yaprak
+    leaf.src = "leafbg.png";
     leaf.style.position="fixed";
     leaf.style.width = leafWidth + "px";
     leaf.style.right = Math.random() * stripWidth + "px";
@@ -136,11 +136,7 @@ for(let i=0;i<leafCount;i++){
     leaf.style.opacity = 1;
     leaf.style.pointerEvents = "none";
     leaf.classList.add("falling-leaf");
-    leaf.style.animationDelay = (Math.random()*5)+"s";
-    
-    // Sağ yaprakları 90 derece sağa döndür
-    leaf.style.transform += " rotate(90deg)";
-    
+    leaf.style.animationDelay = (Math.random()*8)+"s";
     document.body.appendChild(leaf);
 }
 </script>
