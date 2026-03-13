@@ -38,12 +38,23 @@ h1{
 .poem-title{
     cursor:pointer;
     color:#6b4c3b;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+}
+
+.arrow{
+    font-size:18px;
+    transition:transform 0.3s;
 }
 
 .poem-text{
     display:none;
     margin-top:20px;
     white-space:pre-line;
+    font-weight:bold;
+    font-style:italic;
 }
 
 .poem-text.active{
@@ -72,6 +83,7 @@ audio{
 
 <h2 class="poem-title" onclick="siirGoster()">
 İstiklal Marşı
+<span id="ok" class="arrow">▼</span>
 </h2>
 
 <div id="siir" class="poem-text">
@@ -85,6 +97,8 @@ Korkma, sönmez bu şafaklarda yüzen al sancak;
 Sönmeden yurdumun üstünde tüten en son ocak.
 O benim milletimin yıldızıdır, parlayacak;
 O benimdir, o benim milletimindir ancak.
+
+
 Çatma, kurban olayım çehreni ey nazlı hilâl!
 Kahraman ırkıma bir gül… ne bu şiddet bu celâl?
 Sana olmaz dökülen kanlarımız sonra helâl,
@@ -97,7 +111,18 @@ Hakkıdır, Hakk’a tapan, milletimin istiklâl.
 <script>
 
 function siirGoster(){
-    document.getElementById("siir").classList.toggle("active");
+
+let siir = document.getElementById("siir");
+let ok = document.getElementById("ok");
+
+siir.classList.toggle("active");
+
+if(siir.classList.contains("active")){
+ok.style.transform="rotate(180deg)";
+}else{
+ok.style.transform="rotate(0deg)";
+}
+
 }
 
 </script>
