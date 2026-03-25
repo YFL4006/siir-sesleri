@@ -8,99 +8,97 @@
 <style>
 body{
     margin:0;
-    padding:60px 20px;
+    padding:40px 15px;
+    background-color:#fdf6e3;
     font-family:Georgia, serif;
     text-align:center;
     color:#3b2f2f;
     overflow-x:hidden;
 }
 
-/* GRADIENT GEÇİŞ (GECE-GÜNDÜZ) */
-body{
-    background: linear-gradient(to right, #fdf6e3 50%, #1e1e1e 50%);
-    background-size:200% 100%;
-    background-position:left;
-    transition:1s;
-}
-
-body.dark{
-    background-position:right;
-    color:#f1f1f1;
-}
-
-.toggle-btn{
-    position:fixed;
-    top:20px;
-    right:20px;
-    padding:10px 15px;
-    border:none;
-    border-radius:8px;
-    background:#6b4c3b;
-    color:white;
-    cursor:pointer;
-}
-
-/* Yunus Emre arka plan */
+/* Arka plan */
 body::before{
     content:"";
     position:fixed;
     top:50%;
     left:50%;
     transform:translate(-50%,-50%);
-    width:1000px;
-    height:1000px;
+    width:90vw;
+    max-width:900px;
+    height:90vw;
+    max-height:900px;
     background-image:url("yunusemre.png");
     background-repeat:no-repeat;
     background-position:center;
     background-size:contain;
-    opacity:0.15;
+    opacity:0.12;
     z-index:-1;
 }
 
-h1{font-size:3em;}
-.quote{margin-bottom:40px;font-style:italic;}
-
-.poem-card{
-    background:#fff8f0;
-    width:600px;
-    margin:20px auto;
-    padding:30px;
-    border-radius:14px;
-    transition:0.4s;
+h1{
+    font-size:2.2em;
 }
 
-body.dark .poem-card{
-    background:#2b2b2b;
+.quote{
+    font-style:italic;
+    margin-bottom:30px;
+    padding:0 10px;
+}
+
+/* KART */
+.poem-card{
+    background:#fff8f0;
+    width:90%;
+    max-width:600px;
+    margin:15px auto;
+    padding:20px;
+    border-radius:14px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.1);
+    transition:0.3s;
 }
 
 .poem-card:hover{
-    transform:scale(1.03);
+    transform:scale(1.02);
 }
 
 .poem-title{
     cursor:pointer;
     display:flex;
     justify-content:center;
+    align-items:center;
     gap:10px;
+    font-size:1.2em;
 }
 
-.arrow{transition:0.3s;}
+.arrow{
+    transition:0.3s;
+}
 
 .poem-text{
     display:none;
-    margin-top:20px;
+    margin-top:15px;
     white-space:pre-line;
     font-style:italic;
     font-weight:bold;
+    font-size:0.95em;
+    line-height:1.6;
 }
 
-.poem-text.active{display:block;}
+.poem-text.active{
+    display:block;
+}
 
-audio{width:100%;margin-top:10px;}
+audio{
+    width:100%;
+    margin-top:10px;
+}
 
-footer{margin-top:60px;}
+footer{
+    margin-top:50px;
+    font-size:14px;
+}
 
-/* YAPRAK ANİMASYONU */
+/* Yaprak animasyon */
 @keyframes sway {
   0% { transform: translateX(0) rotate(0deg);}
   25% { transform: translateX(3px) rotate(5deg);}
@@ -112,13 +110,18 @@ footer{margin-top:60px;}
 .falling-leaf {
   animation: sway 8s infinite ease-in-out;
 }
+
+/* MOBİL İYİLEŞTİRME */
+@media(max-width:480px){
+    h1{font-size:1.8em;}
+    .poem-title{font-size:1.05em;}
+    .poem-text{font-size:0.9em;}
+}
 </style>
 
 </head>
 
 <body>
-
-<button class="toggle-btn" onclick="toggleMode()">🌗 Geçiş</button>
 
 <h1>Şiir Sesleri</h1>
 
@@ -127,7 +130,7 @@ footer{margin-top:60px;}
 — Yunus Emre
 </div>
 
-<!-- ŞİİRLER -->
+<!-- ŞİİR KARTLARI -->
 
 <script>
 function kart(no, baslik){
@@ -164,23 +167,27 @@ kart(10,"Şiir 10");
 <footer>© 2026 Şiir Sesleri</footer>
 
 <script>
-// Aç/Kapat
+// SADECE BİRİ AÇIK KALSIN
 function siirGoster(no){
-    let siir = document.getElementById("siir"+no);
-    let ok = document.getElementById("ok"+no);
 
-    siir.classList.toggle("active");
+    for(let i=1;i<=10;i++){
+        let siir = document.getElementById("siir"+i);
+        let ok = document.getElementById("ok"+i);
 
-    if(siir.classList.contains("active")){
-        ok.style.transform="rotate(180deg)";
-    }else{
-        ok.style.transform="rotate(0deg)";
+        if(i === no){
+            let aktif = siir.classList.contains("active");
+
+            // önce hepsini kapat
+            document.querySelectorAll(".poem-text").forEach(el=>el.classList.remove("active"));
+            document.querySelectorAll(".arrow").forEach(el=>el.style.transform="rotate(0deg)");
+
+            // eğer kapalıysa aç
+            if(!aktif){
+                siir.classList.add("active");
+                ok.style.transform="rotate(180deg)";
+            }
+        }
     }
-}
-
-// GECE-GÜNDÜZ GEÇİŞ
-function toggleMode(){
-    document.body.classList.toggle("dark");
 }
 
 // YAPRAKLAR
@@ -190,7 +197,7 @@ const leafWidth = 50;
 const screenHeight = window.innerHeight;
 let spacing = screenHeight / leafCount;
 
-// SOL (leafbg2.png)
+// SOL
 for(let i=0;i<leafCount;i++){
     const leaf = document.createElement("img");
     leaf.src = "leafbg2.png";
@@ -203,7 +210,7 @@ for(let i=0;i<leafCount;i++){
     document.body.appendChild(leaf);
 }
 
-// SAĞ (leafbg1.png)
+// SAĞ
 for(let i=0;i<leafCount;i++){
     const leaf = document.createElement("img");
     leaf.src = "leafbg1.png";
