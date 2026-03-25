@@ -139,7 +139,7 @@ audio{
 <script>
 function kart(no, baslik){
     document.write(`
-    <div class="poem-card" data-title="${baslik.toLowerCase()}">
+    <div class="poem-card" data-title="${baslik}">
         <h2 class="poem-title" onclick="siirGoster(${no})">
         ${baslik} <span id="ok${no}" class="arrow">▼</span>
         </h2>
@@ -172,7 +172,7 @@ kart(10,"Şiir 10");
 
 <script>
 
-// TEK AÇIK KART
+// TEK AÇIK KART + SES KONTROL
 function siirGoster(no){
 
     for(let i=1;i<=10;i++){
@@ -184,6 +184,7 @@ function siirGoster(no){
 
             document.querySelectorAll(".poem-text").forEach(el=>{
                 el.classList.remove("active");
+
                 let a = el.querySelector("audio");
                 if(a){
                     a.pause();
@@ -203,13 +204,25 @@ function siirGoster(no){
     }
 }
 
-// 🔍 FİLTRE
+// 🔍 TÜRKÇE UYUMLU FİLTRE
+function normalizeText(text){
+    return text
+        .toLowerCase()
+        .replace(/ı/g,"i")
+        .replace(/i̇/g,"i")
+        .replace(/ç/g,"c")
+        .replace(/ğ/g,"g")
+        .replace(/ş/g,"s")
+        .replace(/ö/g,"o")
+        .replace(/ü/g,"u");
+}
+
 function filterPoems(){
-    let input = document.getElementById("search").value.toLowerCase();
+    let input = normalizeText(document.getElementById("search").value);
     let cards = document.querySelectorAll(".poem-card");
 
     cards.forEach(card=>{
-        let title = card.getAttribute("data-title");
+        let title = normalizeText(card.getAttribute("data-title"));
 
         if(title.includes(input)){
             card.style.display = "block";
