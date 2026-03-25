@@ -38,10 +38,24 @@ h1{font-size:2.2em;}
 
 .quote{
     font-style:italic;
-    margin-bottom:20px;
+    margin-bottom:15px;
 }
 
-/* ARAMA */
+/* MUSIC BUTTON */
+.music-btn{
+    position:fixed;
+    top:15px;
+    right:15px;
+    padding:10px 14px;
+    border:none;
+    border-radius:10px;
+    background:#6b4c3b;
+    color:white;
+    cursor:pointer;
+    z-index:10;
+}
+
+/* SEARCH */
 .search-box{
     width:90%;
     max-width:400px;
@@ -62,21 +76,19 @@ h1{font-size:2.2em;}
     transition:0.3s;
 }
 
-/* BLUR EFFECT */
+/* BLUR */
 .poem-container.blurred .poem-card{
     filter: blur(3px);
-    opacity: 0.4;
-    transform: scale(0.98);
-    transition:0.3s;
+    opacity:0.4;
 }
 
 .poem-container.blurred .poem-card.active-focus{
     filter: blur(0);
-    opacity: 1;
-    transform: scale(1.05);
+    opacity:1;
+    transform:scale(1.05);
 }
 
-/* KART */
+/* CARD */
 .poem-card{
     background:#fff8f0;
     padding:20px;
@@ -95,12 +107,9 @@ h1{font-size:2.2em;}
     justify-content:center;
     align-items:center;
     gap:10px;
-    font-size:1.2em;
 }
 
-.arrow{
-    transition:0.3s;
-}
+.arrow{transition:0.3s;}
 
 .poem-text{
     display:none;
@@ -108,8 +117,6 @@ h1{font-size:2.2em;}
     white-space:pre-line;
     font-style:italic;
     font-weight:bold;
-    font-size:0.95em;
-    line-height:1.6;
 }
 
 .poem-text.active{
@@ -121,7 +128,7 @@ audio{
     margin-top:10px;
 }
 
-/* MOBİL */
+/* MOBILE */
 @media(max-width:600px){
     .poem-container{
         grid-template-columns:1fr;
@@ -140,7 +147,15 @@ audio{
 — Yunus Emre
 </div>
 
-<!-- 🔍 ARAMA -->
+<!-- 🎧 BACKGROUND MUSIC -->
+
+<button class="music-btn" onclick="toggleMusic()">🎵 Piyano</button>
+
+<audio id="bgMusic" loop>
+    <source src="piano.mp3" type="audio/mpeg">
+</audio>
+
+<!-- 🔍 SEARCH -->
 
 <input class="search-box" id="search" onkeyup="filterPoems()" placeholder="Şiir ara...">
 
@@ -149,7 +164,7 @@ audio{
 <script>
 function kart(no, baslik){
     document.write(`
-    <div class="poem-card" data-title="${baslik.toLowerCase()}">
+    <div class="poem-card" data-title="${baslik}">
         <h2 class="poem-title" onclick="siirGoster(${no})">
         ${baslik} <span id="ok${no}" class="arrow">▼</span>
         </h2>
@@ -164,16 +179,9 @@ function kart(no, baslik){
     `);
 }
 
-kart(1,"İstiklal Marşı");
-kart(2,"Şiir 2");
-kart(3,"Şiir 3");
-kart(4,"Şiir 4");
-kart(5,"Şiir 5");
-kart(6,"Şiir 6");
-kart(7,"Şiir 7");
-kart(8,"Şiir 8");
-kart(9,"Şiir 9");
-kart(10,"Şiir 10");
+for(let i=1;i<=10;i++){
+    kart(i,"Şiir "+i);
+}
 </script>
 
 </div>
@@ -182,7 +190,19 @@ kart(10,"Şiir 10");
 
 <script>
 
-// TEK AÇIK + BLUR FOCUS + SES KONTROL
+// 🎧 MUSIC CONTROL
+function toggleMusic(){
+    let music = document.getElementById("bgMusic");
+
+    if(music.paused){
+        music.volume = 0.2; // kısık ses
+        music.play();
+    }else{
+        music.pause();
+    }
+}
+
+// 📌 SINGLE OPEN + BLUR + AUDIO STOP
 function siirGoster(no){
 
     let container = document.querySelector(".poem-container");
@@ -195,7 +215,6 @@ function siirGoster(no){
         if(i === no){
             let aktif = siir.classList.contains("active");
 
-            // hepsini kapat
             document.querySelectorAll(".poem-text").forEach(el=>{
                 el.classList.remove("active");
 
@@ -220,7 +239,6 @@ function siirGoster(no){
 
                 container.classList.add("blurred");
                 card.classList.add("active-focus");
-
             }else{
                 container.classList.remove("blurred");
             }
@@ -228,10 +246,9 @@ function siirGoster(no){
     }
 }
 
-// 🔍 FİLTRE (Türkçe uyumlu)
+// 🔍 FILTER (TR SAFE)
 function normalizeText(text){
-    return text
-        .toLowerCase()
+    return text.toLowerCase()
         .replace(/ı/g,"i")
         .replace(/i̇/g,"i")
         .replace(/ç/g,"c")
@@ -248,9 +265,9 @@ function filterPoems(){
         let title = normalizeText(card.getAttribute("data-title"));
 
         if(title.includes(input)){
-            card.style.display = "block";
+            card.style.display="block";
         }else{
-            card.style.display = "none";
+            card.style.display="none";
         }
     });
 }
