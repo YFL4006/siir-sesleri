@@ -98,19 +98,6 @@ footer{
     font-size:14px;
 }
 
-/* Yaprak animasyon */
-@keyframes sway {
-  0% { transform: translateX(0) rotate(0deg);}
-  25% { transform: translateX(3px) rotate(5deg);}
-  50% { transform: translateX(0) rotate(0deg);}
-  75% { transform: translateX(-3px) rotate(-5deg);}
-  100% { transform: translateX(0) rotate(0deg);}
-}
-
-.falling-leaf {
-  animation: sway 8s infinite ease-in-out;
-}
-
 /* MOBİL İYİLEŞTİRME */
 @media(max-width:480px){
     h1{font-size:1.8em;}
@@ -203,39 +190,7 @@ function siirGoster(no){
         }
     }
 }
-
-// YAPRAKLAR
-const leafCount = 60;
-const stripWidth = 160;
-const leafWidth = 50;
-const screenHeight = window.innerHeight;
-let spacing = screenHeight / leafCount;
-
-// SOL
-for(let i=0;i<leafCount;i++){
-    const leaf = document.createElement("img");
-    leaf.src = "leafbg2.png";
-    leaf.style.position="fixed";
-    leaf.style.width=leafWidth+"px";
-    leaf.style.left = Math.random()*stripWidth + "px";
-    leaf.style.top = (i*spacing) + "px";
-    leaf.classList.add("falling-leaf");
-    leaf.style.pointerEvents="none";
-    document.body.appendChild(leaf);
-}
-
-// SAĞ
-for(let i=0;i<leafCount;i++){
-    const leaf = document.createElement("img");
-    leaf.src = "leafbg1.png";
-    leaf.style.position="fixed";
-    leaf.style.width=leafWidth+"px";
-    leaf.style.right = Math.random()*stripWidth + "px";
-    leaf.style.top = (i*spacing) + "px";
-    leaf.classList.add("falling-leaf");
-    leaf.style.pointerEvents="none";
-    document.body.appendChild(leaf);
-}
+    
 </script>
 
 </body>
