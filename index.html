@@ -34,14 +34,11 @@ body::before{
     z-index:-1;
 }
 
-h1{
-    font-size:2.2em;
-}
+h1{font-size:2.2em;}
 
 .quote{
     font-style:italic;
     margin-bottom:20px;
-    padding:0 10px;
 }
 
 /* ARAMA */
@@ -62,6 +59,21 @@ h1{
     gap:20px;
     max-width:900px;
     margin:auto;
+    transition:0.3s;
+}
+
+/* BLUR EFFECT */
+.poem-container.blurred .poem-card{
+    filter: blur(3px);
+    opacity: 0.4;
+    transform: scale(0.98);
+    transition:0.3s;
+}
+
+.poem-container.blurred .poem-card.active-focus{
+    filter: blur(0);
+    opacity: 1;
+    transform: scale(1.05);
 }
 
 /* KART */
@@ -114,8 +126,6 @@ audio{
     .poem-container{
         grid-template-columns:1fr;
     }
-
-    h1{font-size:1.8em;}
 }
 </style>
 
@@ -139,7 +149,7 @@ audio{
 <script>
 function kart(no, baslik){
     document.write(`
-    <div class="poem-card" data-title="${baslik}">
+    <div class="poem-card" data-title="${baslik.toLowerCase()}">
         <h2 class="poem-title" onclick="siirGoster(${no})">
         ${baslik} <span id="ok${no}" class="arrow">▼</span>
         </h2>
@@ -172,16 +182,20 @@ kart(10,"Şiir 10");
 
 <script>
 
-// TEK AÇIK KART + SES KONTROL
+// TEK AÇIK + BLUR FOCUS + SES KONTROL
 function siirGoster(no){
+
+    let container = document.querySelector(".poem-container");
 
     for(let i=1;i<=10;i++){
         let siir = document.getElementById("siir"+i);
         let ok = document.getElementById("ok"+i);
+        let card = siir.parentElement;
 
         if(i === no){
             let aktif = siir.classList.contains("active");
 
+            // hepsini kapat
             document.querySelectorAll(".poem-text").forEach(el=>{
                 el.classList.remove("active");
 
@@ -196,15 +210,25 @@ function siirGoster(no){
                 el.style.transform="rotate(0deg)";
             });
 
+            document.querySelectorAll(".poem-card").forEach(c=>{
+                c.classList.remove("active-focus");
+            });
+
             if(!aktif){
                 siir.classList.add("active");
                 ok.style.transform="rotate(180deg)";
+
+                container.classList.add("blurred");
+                card.classList.add("active-focus");
+
+            }else{
+                container.classList.remove("blurred");
             }
         }
     }
 }
 
-// 🔍 TÜRKÇE UYUMLU FİLTRE
+// 🔍 FİLTRE (Türkçe uyumlu)
 function normalizeText(text){
     return text
         .toLowerCase()
@@ -219,9 +243,8 @@ function normalizeText(text){
 
 function filterPoems(){
     let input = normalizeText(document.getElementById("search").value);
-    let cards = document.querySelectorAll(".poem-card");
 
-    cards.forEach(card=>{
+    document.querySelectorAll(".poem-card").forEach(card=>{
         let title = normalizeText(card.getAttribute("data-title"));
 
         if(title.includes(input)){
