@@ -40,8 +40,19 @@ h1{
 
 .quote{
     font-style:italic;
-    margin-bottom:30px;
+    margin-bottom:20px;
     padding:0 10px;
+}
+
+/* ARAMA */
+.search-box{
+    width:90%;
+    max-width:400px;
+    padding:12px;
+    margin-bottom:25px;
+    border-radius:10px;
+    border:1px solid #ccc;
+    font-size:16px;
 }
 
 /* GRID */
@@ -98,11 +109,6 @@ audio{
     margin-top:10px;
 }
 
-footer{
-    margin-top:50px;
-    font-size:14px;
-}
-
 /* MOBİL */
 @media(max-width:600px){
     .poem-container{
@@ -110,8 +116,6 @@ footer{
     }
 
     h1{font-size:1.8em;}
-    .poem-title{font-size:1.05em;}
-    .poem-text{font-size:0.9em;}
 }
 </style>
 
@@ -126,12 +130,16 @@ footer{
 — Yunus Emre
 </div>
 
+<!-- 🔍 ARAMA -->
+
+<input class="search-box" id="search" onkeyup="filterPoems()" placeholder="Şiir ara...">
+
 <div class="poem-container">
 
 <script>
 function kart(no, baslik){
     document.write(`
-    <div class="poem-card">
+    <div class="poem-card" data-title="${baslik.toLowerCase()}">
         <h2 class="poem-title" onclick="siirGoster(${no})">
         ${baslik} <span id="ok${no}" class="arrow">▼</span>
         </h2>
@@ -163,7 +171,8 @@ kart(10,"Şiir 10");
 <footer>© 2026 Şiir Sesleri</footer>
 
 <script>
-// TEK AÇIK KART + SES KONTROL
+
+// TEK AÇIK KART
 function siirGoster(no){
 
     for(let i=1;i<=10;i++){
@@ -173,10 +182,8 @@ function siirGoster(no){
         if(i === no){
             let aktif = siir.classList.contains("active");
 
-            // hepsini kapat + ses durdur
             document.querySelectorAll(".poem-text").forEach(el=>{
                 el.classList.remove("active");
-
                 let a = el.querySelector("audio");
                 if(a){
                     a.pause();
@@ -188,7 +195,6 @@ function siirGoster(no){
                 el.style.transform="rotate(0deg)";
             });
 
-            // tekrar aç
             if(!aktif){
                 siir.classList.add("active");
                 ok.style.transform="rotate(180deg)";
@@ -196,6 +202,23 @@ function siirGoster(no){
         }
     }
 }
+
+// 🔍 FİLTRE
+function filterPoems(){
+    let input = document.getElementById("search").value.toLowerCase();
+    let cards = document.querySelectorAll(".poem-card");
+
+    cards.forEach(card=>{
+        let title = card.getAttribute("data-title");
+
+        if(title.includes(input)){
+            card.style.display = "block";
+        }else{
+            card.style.display = "none";
+        }
+    });
+}
+
 </script>
 
 </body>
