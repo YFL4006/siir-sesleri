@@ -34,6 +34,18 @@ body::before{
     z-index:-1;
 }
 
+/* KARARTMA */
+body.blurred-bg::after{
+    content:"";
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.45);
+    z-index:50;
+}
+
 h1{font-size:2.2em;}
 
 .quote{
@@ -52,7 +64,7 @@ h1{font-size:2.2em;}
     background:#6b4c3b;
     color:white;
     cursor:pointer;
-    z-index:10;
+    z-index:200;
 }
 
 /* SEARCH */
@@ -73,19 +85,12 @@ h1{font-size:2.2em;}
     gap:20px;
     max-width:900px;
     margin:auto;
-    transition:0.3s;
 }
 
 /* BLUR */
 .poem-container.blurred .poem-card{
-    filter: blur(3px);
-    opacity:0.4;
-}
-
-.poem-container.blurred .poem-card.active-focus{
-    filter: blur(0);
-    opacity:1;
-    transform:scale(1.05);
+    filter: blur(4px);
+    opacity:0.25;
 }
 
 /* CARD */
@@ -94,9 +99,22 @@ h1{font-size:2.2em;}
     padding:20px;
     border-radius:14px;
     box-shadow:0 4px 15px rgba(0,0,0,0.1);
-    transition:0.3s;
+    transition: all 0.4s ease;
 }
 
+/* ORTAYA GELEN KART */
+.poem-card.active-focus{
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%) scale(1.15);
+    width:90%;
+    max-width:500px;
+    z-index:100;
+    box-shadow:0 10px 40px rgba(0,0,0,0.4);
+}
+
+/* hover */
 .poem-card:hover{
     transform:translateY(-5px) scale(1.02);
 }
@@ -147,15 +165,11 @@ audio{
 — Yunus Emre
 </div>
 
-<!-- 🎧 BACKGROUND MUSIC -->
-
 <button class="music-btn" onclick="toggleMusic()">🎵 Piyano</button>
 
 <audio id="bgMusic" loop>
     <source src="piano.mp3" type="audio/mpeg">
 </audio>
-
-<!-- 🔍 SEARCH -->
 
 <input class="search-box" id="search" onkeyup="filterPoems()" placeholder="Şiir ara...">
 
@@ -190,19 +204,22 @@ for(let i=1;i<=10;i++){
 
 <script>
 
-// 🎧 MUSIC CONTROL
+// 🎧 MUSIC
 function toggleMusic(){
     let music = document.getElementById("bgMusic");
+    let btn = document.querySelector(".music-btn");
 
     if(music.paused){
-        music.volume = 0.2; // kısık ses
+        music.volume = 0.2;
         music.play();
+        btn.innerText = "⏸️ Durdur";
     }else{
         music.pause();
+        btn.innerText = "🎵 Piyano";
     }
 }
 
-// 📌 SINGLE OPEN + BLUR + AUDIO STOP
+// 📌 MODAL GİBİ AÇMA
 function siirGoster(no){
 
     let container = document.querySelector(".poem-container");
@@ -239,14 +256,19 @@ function siirGoster(no){
 
                 container.classList.add("blurred");
                 card.classList.add("active-focus");
+
+                document.body.classList.add("blurred-bg");
+                document.body.style.overflow = "hidden";
             }else{
                 container.classList.remove("blurred");
+                document.body.classList.remove("blurred-bg");
+                document.body.style.overflow = "auto";
             }
         }
     }
 }
 
-// 🔍 FILTER (TR SAFE)
+// 🔍 FILTER
 function normalizeText(text){
     return text.toLowerCase()
         .replace(/ı/g,"i")
