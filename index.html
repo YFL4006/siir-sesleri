@@ -15,7 +15,7 @@ body{
     color:#3b2f2f;
 }
 
-/* Arka plan */
+/* arka plan */
 body::before{
     content:"";
     position:fixed;
@@ -26,55 +26,42 @@ body::before{
     max-width:900px;
     height:90vw;
     max-height:900px;
-    background-image:url("yunusemre.png");
-    background-repeat:no-repeat;
-    background-position:center;
-    background-size:contain;
+    background:url("yunusemre.png") no-repeat center/contain;
     opacity:0.12;
     z-index:-1;
 }
 
-h1{font-size:2.2em;}
-
-.quote{
-    font-style:italic;
-    margin-bottom:15px;
+/* blur */
+.poem-container.blurred .poem-card{
+    filter: blur(3px);
+    opacity:0.3;
+    transition:0.3s;
 }
 
-/* SEARCH */
-.search-box{
-    width:90%;
-    max-width:400px;
-    padding:12px;
-    margin-bottom:25px;
-    border-radius:10px;
-    border:1px solid #ccc;
-    font-size:16px;
+.poem-container.blurred .active-focus{
+    filter: blur(0);
+    opacity:1;
 }
 
-/* GRID */
-.poem-container{
-    display:grid;
-    grid-template-columns:repeat(2, 1fr);
-    gap:20px;
-    max-width:900px;
-    margin:auto;
-}
-
-/* CARD */
+/* kart */
 .poem-card{
     background:#fff8f0;
     padding:20px;
     border-radius:14px;
     box-shadow:0 4px 15px rgba(0,0,0,0.1);
-    transition: all 0.35s ease;
+    transition: all 0.4s ease;
 }
 
-/* AKTİF KART (SADECE ZOOM) */
+/* ORTALAMA + BÜYÜTME */
 .poem-card.active-focus{
-    transform: scale(1.12);
-    box-shadow:0 10px 30px rgba(0,0,0,0.25);
-    z-index:5;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%) scale(1.25);
+    width:90%;
+    max-width:600px;
+    z-index:100;
+    box-shadow:0 20px 60px rgba(0,0,0,0.4);
 }
 
 /* hover */
@@ -84,13 +71,7 @@ h1{font-size:2.2em;}
 
 .poem-title{
     cursor:pointer;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:10px;
 }
-
-.arrow{transition:0.3s;}
 
 .poem-text{
     display:none;
@@ -104,12 +85,12 @@ h1{font-size:2.2em;}
     display:block;
 }
 
-audio{
-    width:100%;
-    margin-top:10px;
+.search-box{
+    padding:10px;
+    margin-bottom:20px;
 }
 
-/* MOBILE */
+/* mobile */
 @media(max-width:600px){
     .poem-container{
         grid-template-columns:1fr;
@@ -123,11 +104,6 @@ audio{
 
 <h1>Şiir Sesleri</h1>
 
-<div class="quote">
-“Sevelim sevilelim, dünya kimseye kalmaz.” <br>
-— Yunus Emre
-</div>
-
 <input class="search-box" id="search" onkeyup="filterPoems()" placeholder="Şiir ara...">
 
 <div class="poem-container">
@@ -136,15 +112,12 @@ audio{
 function kart(no, baslik){
     document.write(`
     <div class="poem-card" data-title="${baslik}">
-        <h2 class="poem-title" onclick="siirGoster(${no})">
-        ${baslik} <span id="ok${no}" class="arrow">▼</span>
-        </h2>
+        <h2 onclick="siirGoster(${no})">${baslik}</h2>
         <div id="siir${no}" class="poem-text">
             <audio controls>
-            <source src="siir${no}.mp3" type="audio/mpeg">
+                <source src="siir${no}.mp3">
             </audio>
-
-            Şiir metni buraya gelecek...
+            Şiir metni...
         </div>
     </div>
     `);
@@ -157,15 +130,14 @@ for(let i=1;i<=10;i++){
 
 </div>
 
-<footer>© 2026 Şiir Sesleri</footer>
-
 <script>
 
 function siirGoster(no){
 
+    let container = document.querySelector(".poem-container");
+
     for(let i=1;i<=10;i++){
         let siir = document.getElementById("siir"+i);
-        let ok = document.getElementById("ok"+i);
         let card = siir.parentElement;
 
         if(i === no){
@@ -173,16 +145,6 @@ function siirGoster(no){
 
             document.querySelectorAll(".poem-text").forEach(el=>{
                 el.classList.remove("active");
-
-                let a = el.querySelector("audio");
-                if(a){
-                    a.pause();
-                    a.currentTime = 0;
-                }
-            });
-
-            document.querySelectorAll(".arrow").forEach(el=>{
-                el.style.transform="rotate(0deg)";
             });
 
             document.querySelectorAll(".poem-card").forEach(c=>{
@@ -191,36 +153,30 @@ function siirGoster(no){
 
             if(!aktif){
                 siir.classList.add("active");
-                ok.style.transform="rotate(180deg)");
                 card.classList.add("active-focus");
+                container.classList.add("blurred");
+
+                // 💥 ORTAYA SCROLL (yeni sayfa hissini azaltır)
+                card.scrollIntoView({
+                    behavior:"smooth",
+                    block:"center"
+                });
+
+            }else{
+                container.classList.remove("blurred");
             }
         }
     }
 }
 
-// FILTER
-function normalizeText(text){
-    return text.toLowerCase()
-        .replace(/ı/g,"i")
-        .replace(/i̇/g,"i")
-        .replace(/ç/g,"c")
-        .replace(/ğ/g,"g")
-        .replace(/ş/g,"s")
-        .replace(/ö/g,"o")
-        .replace(/ü/g,"u");
-}
-
+// filter
 function filterPoems(){
-    let input = normalizeText(document.getElementById("search").value);
+    let input = document.getElementById("search").value.toLowerCase();
 
     document.querySelectorAll(".poem-card").forEach(card=>{
-        let title = normalizeText(card.getAttribute("data-title"));
+        let title = card.getAttribute("data-title").toLowerCase();
 
-        if(title.includes(input)){
-            card.style.display="block";
-        }else{
-            card.style.display="none";
-        }
+        card.style.display = title.includes(input) ? "block" : "none";
     });
 }
 
