@@ -73,12 +73,14 @@ h1{font-size:2.2em;}
     padding:20px;
     border-radius:14px;
     box-shadow:0 4px 15px rgba(0,0,0,0.1);
-    transition:0.3s;
+    transition:0.3s, background-color 0.3s;
     cursor:pointer;
 }
 
+/* HOVER COLOR CHANGE */
 .poem-card:hover{
     transform:translateY(-5px) scale(1.02);
+    background-color:#fff1e0;
 }
 
 .poem-title{
@@ -99,21 +101,30 @@ h1{font-size:2.2em;}
     font-weight:bold;
 }
 
-.poem-text.active{
-    display:block;
-}
-
-/* MODAL EFFECT */
+/* FADE IN / OUT EFFECT FOR CARD */
 .poem-card.active-focus{
+    display:block;
     position:fixed;
     top:50%;
     left:50%;
-    transform:translate(-50%,-50%) scale(1.1);
+    transform:translate(-50%,-50%) scale(0.9);
     z-index:1000;
     width:90%;
     max-width:700px;
     box-shadow:0 10px 40px rgba(0,0,0,0.3);
     background:#fff8f0;
+    opacity:0;
+    animation:fadeInScale 0.35s forwards;
+}
+
+/* ANIMATION */
+@keyframes fadeInScale{
+    0% { opacity:0; transform:translate(-50%, -50%) scale(0.9);}
+    100% { opacity:1; transform:translate(-50%, -50%) scale(1.1);}
+}
+
+.poem-text.active{
+    display:block;
 }
 
 /* AUDIO */
@@ -165,7 +176,7 @@ function kart(no, baslik){
         ${baslik} <span id="ok${no}" class="arrow">▼</span>
         </h2>
         <div id="siir${no}" class="poem-text">
-            <audio controls>
+            <audio id="audio${no}" controls>
             <source src="siir${no}.mp3" type="audio/mpeg">
             </audio>
 
@@ -185,15 +196,37 @@ for(let i=1;i<=10;i++){
 <div class="signature">ahmaddarrak7765</div>
 
 <script>
-// 📌 SINGLE OPEN + MODAL + BLUR + AUDIO STOP
+// AUDIO FADE IN / OUT
+function fadeAudio(audio, type, duration = 500){
+    let step = 50;
+    let interval = duration / (duration/step);
+    if(type === 'in'){
+        audio.volume = 0;
+        audio.play();
+        let vol = 0;
+        let fadeIn = setInterval(()=>{
+            vol += 0.05;
+            if(vol >= 0.2){ audio.volume = 0.2; clearInterval(fadeIn);}
+            else audio.volume = vol;
+        }, step);
+    } else {
+        let fadeOut = setInterval(()=>{
+            audio.volume -= 0.05;
+            if(audio.volume <= 0){ audio.pause(); audio.currentTime=0; clearInterval(fadeOut);}
+        }, step);
+    }
+}
+
+// 📌 SINGLE OPEN + MODAL + BLUR
 function siirGoster(event, no){
-    event.stopPropagation(); // Tıklama olayını yukarı göndermeyi durdur
+    event.stopPropagation();
     let container = document.querySelector(".poem-container");
 
     for(let i=1;i<=10;i++){
         let siir = document.getElementById("siir"+i);
         let ok = document.getElementById("ok"+i);
         let card = siir.parentElement;
+        let audio = document.getElementById("audio"+i);
 
         if(i === no){
             let aktif = siir.classList.contains("active");
@@ -202,16 +235,11 @@ function siirGoster(event, no){
             document.querySelectorAll(".poem-text").forEach(el=>{
                 el.classList.remove("active");
                 let a = el.querySelector("audio");
-                if(a){ a.pause(); a.currentTime = 0; }
+                if(a){ fadeAudio(a,'out'); }
             });
 
-            document.querySelectorAll(".arrow").forEach(el=>{
-                el.style.transform="rotate(0deg)";
-            });
-
-            document.querySelectorAll(".poem-card").forEach(c=>{
-                c.classList.remove("active-focus");
-            });
+            document.querySelectorAll(".arrow").forEach(el=>{ el.style.transform="rotate(0deg)"; });
+            document.querySelectorAll(".poem-card").forEach(c=>{ c.classList.remove("active-focus"); });
 
             if(!aktif){
                 // Aktif kart aç
@@ -219,15 +247,15 @@ function siirGoster(event, no){
                 ok.style.transform="rotate(180deg)";
                 container.classList.add("modal-open");
                 card.classList.add("active-focus");
+                fadeAudio(audio,'in');
             } else {
-                // Kart kapat
                 container.classList.remove("modal-open");
             }
         }
     }
 }
 
-// 🔍 FILTER (TR SAFE)
+// 🔍 FILTER
 function normalizeText(text){
     return text.toLowerCase()
         .replace(/ı/g,"i")
@@ -247,40 +275,30 @@ function filterPoems(){
     });
 }
 
-// ESC veya ekrana tıklayınca kapatma
+// CLICK OUTSIDE OR ESC TO CLOSE
 document.addEventListener("click", function(e){
     let container = document.querySelector(".poem-container");
     if(container.classList.contains("modal-open")){
-        // Tüm kartları kapat
         document.querySelectorAll(".poem-text").forEach(el=>{
             el.classList.remove("active");
             let a = el.querySelector("audio");
-            if(a){ a.pause(); a.currentTime = 0; }
+            if(a){ fadeAudio(a,'out'); }
         });
-        document.querySelectorAll(".arrow").forEach(el=>{
-            el.style.transform="rotate(0deg)";
-        });
-        document.querySelectorAll(".poem-card").forEach(c=>{
-            c.classList.remove("active-focus");
-        });
+        document.querySelectorAll(".arrow").forEach(el=>{ el.style.transform="rotate(0deg)"; });
+        document.querySelectorAll(".poem-card").forEach(c=>{ c.classList.remove("active-focus"); });
         container.classList.remove("modal-open");
     }
 });
 
-// ESC ile kapatma
 document.addEventListener("keydown", function(e){
     if(e.key === "Escape"){
         document.querySelectorAll(".poem-text").forEach(el=>{
             el.classList.remove("active");
             let a = el.querySelector("audio");
-            if(a){ a.pause(); a.currentTime = 0; }
+            if(a){ fadeAudio(a,'out'); }
         });
-        document.querySelectorAll(".arrow").forEach(el=>{
-            el.style.transform="rotate(0deg)";
-        });
-        document.querySelectorAll(".poem-card").forEach(c=>{
-            c.classList.remove("active-focus");
-        });
+        document.querySelectorAll(".arrow").forEach(el=>{ el.style.transform="rotate(0deg)"; });
+        document.querySelectorAll(".poem-card").forEach(c=>{ c.classList.remove("active-focus"); });
         document.querySelector(".poem-container").classList.remove("modal-open");
     }
 });
