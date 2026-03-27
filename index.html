@@ -34,37 +34,11 @@ body::before{
     z-index:-1;
 }
 
-/* KARARTMA */
-body.blurred-bg::after{
-    content:"";
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background:rgba(0,0,0,0.45);
-    z-index:50;
-}
-
 h1{font-size:2.2em;}
 
 .quote{
     font-style:italic;
     margin-bottom:15px;
-}
-
-/* MUSIC BUTTON */
-.music-btn{
-    position:fixed;
-    top:15px;
-    right:15px;
-    padding:10px 14px;
-    border:none;
-    border-radius:10px;
-    background:#6b4c3b;
-    color:white;
-    cursor:pointer;
-    z-index:200;
 }
 
 /* SEARCH */
@@ -87,31 +61,20 @@ h1{font-size:2.2em;}
     margin:auto;
 }
 
-/* BLUR */
-.poem-container.blurred .poem-card{
-    filter: blur(4px);
-    opacity:0.25;
-}
-
 /* CARD */
 .poem-card{
     background:#fff8f0;
     padding:20px;
     border-radius:14px;
     box-shadow:0 4px 15px rgba(0,0,0,0.1);
-    transition: all 0.4s ease;
+    transition: all 0.35s ease;
 }
 
-/* ORTAYA GELEN KART */
+/* AKTİF KART (SADECE ZOOM) */
 .poem-card.active-focus{
-    position:fixed;
-    top:50%;
-    left:50%;
-    transform:translate(-50%, -50%) scale(1.15);
-    width:90%;
-    max-width:500px;
-    z-index:100;
-    box-shadow:0 10px 40px rgba(0,0,0,0.4);
+    transform: scale(1.12);
+    box-shadow:0 10px 30px rgba(0,0,0,0.25);
+    z-index:5;
 }
 
 /* hover */
@@ -165,12 +128,6 @@ audio{
 — Yunus Emre
 </div>
 
-<button class="music-btn" onclick="toggleMusic()">🎵 Piyano</button>
-
-<audio id="bgMusic" loop>
-    <source src="piano.mp3" type="audio/mpeg">
-</audio>
-
 <input class="search-box" id="search" onkeyup="filterPoems()" placeholder="Şiir ara...">
 
 <div class="poem-container">
@@ -204,25 +161,7 @@ for(let i=1;i<=10;i++){
 
 <script>
 
-// 🎧 MUSIC
-function toggleMusic(){
-    let music = document.getElementById("bgMusic");
-    let btn = document.querySelector(".music-btn");
-
-    if(music.paused){
-        music.volume = 0.2;
-        music.play();
-        btn.innerText = "⏸️ Durdur";
-    }else{
-        music.pause();
-        btn.innerText = "🎵 Piyano";
-    }
-}
-
-// 📌 MODAL GİBİ AÇMA
 function siirGoster(no){
-
-    let container = document.querySelector(".poem-container");
 
     for(let i=1;i<=10;i++){
         let siir = document.getElementById("siir"+i);
@@ -252,23 +191,14 @@ function siirGoster(no){
 
             if(!aktif){
                 siir.classList.add("active");
-                ok.style.transform="rotate(180deg)";
-
-                container.classList.add("blurred");
+                ok.style.transform="rotate(180deg)");
                 card.classList.add("active-focus");
-
-                document.body.classList.add("blurred-bg");
-                document.body.style.overflow = "hidden";
-            }else{
-                container.classList.remove("blurred");
-                document.body.classList.remove("blurred-bg");
-                document.body.style.overflow = "auto";
             }
         }
     }
 }
 
-// 🔍 FILTER
+// FILTER
 function normalizeText(text){
     return text.toLowerCase()
         .replace(/ı/g,"i")
