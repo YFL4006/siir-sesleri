@@ -9,7 +9,7 @@
 body{
     margin:0;
     padding:40px 15px;
-    background-color:#fdf6e3;
+    background:linear-gradient(135deg,#fdf6e3,#f5e6ca);
     font-family:Georgia, serif;
     text-align:center;
     color:#3b2f2f;
@@ -18,51 +18,30 @@ body{
 
 /* DARK MODE */
 body.dark{
-    background:#1e1e1e;
+    background:linear-gradient(135deg,#1e1e1e,#2a2a2a);
     color:#eee;
 }
 
 body.dark .poem-card{
     background:#2a2a2a;
+    box-shadow:0 0 15px rgba(255,255,255,0.05);
 }
 
-/* BAŞLIK VE OK BEYAZ */
-body.dark .poem-title{
-    color:#f5f5f5;
-}
+body.dark .poem-title,
 body.dark .arrow{
     color:#f5f5f5;
 }
 
-/* ARKA PLAN */
-body::before{
-    content:"";
-    position:fixed;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    width:90vw;
-    height:90vw;
-    background-image:url("yunusemre.png");
-    background-repeat:no-repeat;
-    background-position:center;
-    background-size:contain;
-    opacity:0.12;
-    z-index:-1;
+/* OKUMA MODU */
+body.reading .controls,
+body.reading h1{
+    display:none;
 }
 
-h1{font-size:2em;}
-
-.controls{
-    margin-bottom:20px;
-}
-
-button, select{
-    padding:8px 12px;
-    margin:5px;
-    border-radius:8px;
-    border:none;
-    cursor:pointer;
+body.reading .poem-card.active-focus{
+    width:95%;
+    max-width:800px;
+    font-size:1.3em;
 }
 
 /* GRID */
@@ -89,22 +68,21 @@ button, select{
 .poem-title{
     display:flex;
     justify-content:center;
-    align-items:center;
     gap:10px;
 }
 
-/* OK */
-.arrow{
-    transition:0.3s;
-}
+.arrow{transition:0.3s;}
 
 /* TEXT */
 .poem-text{
     display:none;
     margin-top:10px;
+    opacity:0;
+    transition:opacity 0.3s;
 }
 .poem-text.active{
     display:block;
+    opacity:1;
 }
 
 /* MODAL */
@@ -116,11 +94,6 @@ button, select{
     width:90%;
     max-width:700px;
     z-index:1000;
-}
-
-/* AUDIO */
-audio{
-    width:100%;
 }
 
 /* OVERLAY */
@@ -155,6 +128,7 @@ audio{
 
 <div class="controls">
     <button onclick="randomSiir()">🎲 Rastgele</button>
+    <button onclick="okumaModu()">📖 Okuma</button>
 
     <select onchange="degistirHiz(this.value)">
         <option value="1">Normal</option>
@@ -171,6 +145,7 @@ audio{
 
 <script>
 let currentAudio=null;
+let currentIndex=1;
 
 /* KART */
 function kart(no){
@@ -179,18 +154,30 @@ function kart(no){
         <h2 class="poem-title" onclick="siirGoster(event,${no})">
             Şiir ${no} <span id="ok${no}" class="arrow">▼</span>
         </h2>
-        <div id="siir${no}" class="poem-text">
+        <div id="siir${no}" class="poem-text" data-text="Şiir metni buraya gelecek...">
             <audio id="audio${no}" controls>
                 <source src="siir${no}.mp3">
             </audio>
-            Şiir metni...
+            <span class="yazi"></span>
         </div>
     </div>`;
 }
 for(let i=1;i<=10;i++){kart(i);}
 
+/* TYPE EFFECT */
+function typeWriter(el, text){
+    el.innerHTML="";
+    let i=0;
+    let interval=setInterval(()=>{
+        el.innerHTML += text.charAt(i);
+        i++;
+        if(i>=text.length) clearInterval(interval);
+    },20);
+}
+
 /* AÇ */
 function siirGoster(e,no){
+    currentIndex=no;
     let overlay=document.getElementById("overlay");
 
     for(let i=1;i<=10;i++){
@@ -213,16 +200,21 @@ function siirGoster(e,no){
     ok.style.transform="rotate(180deg)";
     overlay.classList.add("active");
 
+    let text=siir.getAttribute("data-text");
+    let span=siir.querySelector(".yazi");
+    typeWriter(span,text);
+
     if(currentAudio){
         currentAudio.pause();
         currentAudio.currentTime=0;
     }
-
     currentAudio=audio;
 }
 
 /* KAPAT */
-document.getElementById("overlay").onclick=()=>{
+document.getElementById("overlay").onclick=closeAll;
+
+function closeAll(){
     for(let i=1;i<=10;i++){
         let siir=document.getElementById("siir"+i);
         let ok=document.getElementById("ok"+i);
@@ -232,18 +224,20 @@ document.getElementById("overlay").onclick=()=>{
         card.classList.remove("active-focus");
         ok.style.transform="rotate(0deg)";
     }
-
     document.getElementById("overlay").classList.remove("active");
 
-    if(currentAudio){
-        currentAudio.pause();
-    }
+    if(currentAudio) currentAudio.pause();
 }
 
 /* 🎲 RANDOM */
 function randomSiir(){
     let no=Math.floor(Math.random()*10)+1;
     siirGoster(new Event('click'),no);
+}
+
+/* 📖 OKUMA MODU */
+function okumaModu(){
+    document.body.classList.toggle("reading");
 }
 
 /* 🎧 SPEED */
@@ -259,12 +253,16 @@ function tema(t){
     if(t==="dark") document.body.classList.add("dark");
 }
 
-/* 🌀 PARALLAX */
-document.addEventListener("mousemove", e=>{
-    let x=(e.clientX/window.innerWidth-0.5)*10;
-    let y=(e.clientY/window.innerHeight-0.5)*10;
-
-    document.body.style.transform=`translate(${x/50}px,${y/50}px)`;
+/* 🌀 SCROLL GEÇİŞ */
+window.addEventListener("wheel", e=>{
+    if(document.querySelector(".active-focus")){
+        if(e.deltaY>0 && currentIndex<10){
+            siirGoster(new Event('click'), currentIndex+1);
+        }
+        if(e.deltaY<0 && currentIndex>1){
+            siirGoster(new Event('click'), currentIndex-1);
+        }
+    }
 });
 </script>
 
