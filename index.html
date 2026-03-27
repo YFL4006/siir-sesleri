@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
@@ -114,6 +113,18 @@ audio{
     margin-top:10px;
 }
 
+/* SIGNATURE */
+.signature{
+    position:fixed;
+    bottom:15px;
+    right:15px;
+    font-weight:bold;
+    font-style:italic;
+    color:#3b2f2f;
+    opacity:0.7;
+    z-index:999;
+}
+
 /* MOBILE */
 @media(max-width:600px){
     .poem-container{
@@ -134,7 +145,6 @@ audio{
 </div>
 
 <!-- 🔍 SEARCH -->
-
 <input class="search-box" id="search" onkeyup="filterPoems()" placeholder="Şiir ara...">
 
 <div class="poem-container">
@@ -166,8 +176,10 @@ for(let i=1;i<=10;i++){
 
 <footer>© 2026 Şiir Sesleri</footer>
 
-<script>
+<!-- SIGNATURE -->
+<div class="signature">ahmotaro-6577</div>
 
+<script>
 // 📌 SINGLE OPEN + BLUR + AUDIO STOP
 function siirGoster(no){
 
