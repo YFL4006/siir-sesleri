@@ -61,8 +61,8 @@ h1{font-size:2.2em;}
     transition:0.3s;
 }
 
-/* BLUR EFFECT WHEN MODAL OPEN */
-.poem-container.modal-open .poem-card{
+/* BLUR EFFECT WHEN MODAL OPEN, EXCEPT ACTIVE CARD */
+.poem-container.modal-open .poem-card:not(.active-focus){
     filter: blur(3px);
     opacity:0.4;
 }
@@ -113,6 +113,7 @@ h1{font-size:2.2em;}
     width:90%;
     max-width:700px;
     box-shadow:0 10px 40px rgba(0,0,0,0.3);
+    background:#fff8f0;
 }
 
 /* AUDIO */
@@ -152,16 +153,15 @@ audio{
 — Yunus Emre
 </div>
 
-<!-- 🔍 SEARCH -->
+<!-- SEARCH -->
 <input class="search-box" id="search" onkeyup="filterPoems()" placeholder="Şiir ara...">
 
 <div class="poem-container">
-
 <script>
 function kart(no, baslik){
     document.write(`
     <div class="poem-card" data-title="${baslik}">
-        <h2 class="poem-title" onclick="siirGoster(${no})">
+        <h2 class="poem-title" onclick="siirGoster(event, ${no})">
         ${baslik} <span id="ok${no}" class="arrow">▼</span>
         </h2>
         <div id="siir${no}" class="poem-text">
@@ -179,7 +179,6 @@ for(let i=1;i<=10;i++){
     kart(i,"Şiir "+i);
 }
 </script>
-
 </div>
 
 <footer>© 2026 Şiir Sesleri</footer>
@@ -189,7 +188,8 @@ for(let i=1;i<=10;i++){
 
 <script>
 // 📌 SINGLE OPEN + MODAL + BLUR + AUDIO STOP
-function siirGoster(no){
+function siirGoster(event, no){
+    event.stopPropagation(); // Tıklama olayını yukarı göndermeyi durdur
     let container = document.querySelector(".poem-container");
 
     for(let i=1;i<=10;i++){
@@ -243,19 +243,33 @@ function normalizeText(text){
 
 function filterPoems(){
     let input = normalizeText(document.getElementById("search").value);
-
     document.querySelectorAll(".poem-card").forEach(card=>{
         let title = normalizeText(card.getAttribute("data-title"));
-
-        if(title.includes(input)){
-            card.style.display="block";
-        }else{
-            card.style.display="none";
-        }
+        card.style.display = title.includes(input) ? "block" : "none";
     });
 }
 
-// ESC ile kart kapatma
+// ESC veya ekrana tıklayınca kapatma
+document.addEventListener("click", function(e){
+    let container = document.querySelector(".poem-container");
+    if(container.classList.contains("modal-open")){
+        // Tüm kartları kapat
+        document.querySelectorAll(".poem-text").forEach(el=>{
+            el.classList.remove("active");
+            let a = el.querySelector("audio");
+            if(a){ a.pause(); a.currentTime = 0; }
+        });
+        document.querySelectorAll(".arrow").forEach(el=>{
+            el.style.transform="rotate(0deg)";
+        });
+        document.querySelectorAll(".poem-card").forEach(c=>{
+            c.classList.remove("active-focus");
+        });
+        container.classList.remove("modal-open");
+    }
+});
+
+// ESC ile kapatma
 document.addEventListener("keydown", function(e){
     if(e.key === "Escape"){
         document.querySelectorAll(".poem-text").forEach(el=>{
