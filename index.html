@@ -13,7 +13,7 @@ body{
     font-family:Georgia, serif;
     text-align:center;
     color:#3b2f2f;
-    transition:0.3s;
+    overflow-x:hidden;
 }
 
 /* DARK MODE */
@@ -32,16 +32,14 @@ body.dark .arrow{
     color:#f5f5f5;
 }
 
-/* OKUMA MODU */
-body.reading .controls,
-body.reading h1{
-    display:none;
-}
-
-body.reading .poem-card.active-focus{
-    width:95%;
-    max-width:800px;
-    font-size:1.3em;
+/* PARTICLE CANVAS */
+#particles{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    z-index:-1;
 }
 
 /* GRID */
@@ -73,12 +71,11 @@ body.reading .poem-card.active-focus{
 
 .arrow{transition:0.3s;}
 
-/* TEXT */
 .poem-text{
     display:none;
     margin-top:10px;
     opacity:0;
-    transition:opacity 0.3s;
+    transition:0.3s;
 }
 .poem-text.active{
     display:block;
@@ -124,11 +121,12 @@ body.reading .poem-card.active-focus{
 
 <body>
 
+<canvas id="particles"></canvas>
+
 <h1>Şiir Sesleri</h1>
 
 <div class="controls">
     <button onclick="randomSiir()">🎲 Rastgele</button>
-    <button onclick="okumaModu()">📖 Okuma</button>
 
     <select onchange="degistirHiz(this.value)">
         <option value="1">Normal</option>
@@ -229,31 +227,26 @@ function closeAll(){
     if(currentAudio) currentAudio.pause();
 }
 
-/* 🎲 RANDOM */
+/* RANDOM */
 function randomSiir(){
     let no=Math.floor(Math.random()*10)+1;
     siirGoster(new Event('click'),no);
 }
 
-/* 📖 OKUMA MODU */
-function okumaModu(){
-    document.body.classList.toggle("reading");
-}
-
-/* 🎧 SPEED */
+/* SPEED */
 function degistirHiz(hiz){
     if(currentAudio){
         currentAudio.playbackRate=hiz;
     }
 }
 
-/* 🎨 TEMA */
+/* TEMA */
 function tema(t){
     document.body.classList.remove("dark");
     if(t==="dark") document.body.classList.add("dark");
 }
 
-/* 🌀 SCROLL GEÇİŞ */
+/* SCROLL GEÇİŞ */
 window.addEventListener("wheel", e=>{
     if(document.querySelector(".active-focus")){
         if(e.deltaY>0 && currentIndex<10){
@@ -263,6 +256,51 @@ window.addEventListener("wheel", e=>{
             siirGoster(new Event('click'), currentIndex-1);
         }
     }
+});
+
+/* ✨ PARTICLES */
+const canvas=document.getElementById("particles");
+const ctx=canvas.getContext("2d");
+
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+let particles=[];
+
+for(let i=0;i<60;i++){
+    particles.push({
+        x:Math.random()*canvas.width,
+        y:Math.random()*canvas.height,
+        r:Math.random()*2+1,
+        dx:(Math.random()-0.5)*0.5,
+        dy:(Math.random()-0.5)*0.5
+    });
+}
+
+function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    particles.forEach(p=>{
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.fillStyle="rgba(200,200,200,0.3)";
+        ctx.fill();
+
+        p.x+=p.dx;
+        p.y+=p.dy;
+
+        if(p.x<0||p.x>canvas.width) p.dx*=-1;
+        if(p.y<0||p.y>canvas.height) p.dy*=-1;
+    });
+
+    requestAnimationFrame(draw);
+}
+
+draw();
+
+window.addEventListener("resize",()=>{
+    canvas.width=window.innerWidth;
+    canvas.height=window.innerHeight;
 });
 </script>
 
