@@ -1,291 +1,153 @@
-<!DOCTYPE html>  <html lang="tr">  
-<head>  
-<meta charset="UTF-8">  
-<meta name="viewport" content="width=device-width, initial-scale=1.0">  
-<title>Şiir Sesleri</title>  <style>  
-body{  
-    margin:0;  
-    padding:40px 15px;  
-    background:linear-gradient(135deg,#fdf6e3,#f5e6ca);  
-    font-family:Georgia, serif;  
-    text-align:center;  
-    color:#3b2f2f;  
-    overflow-x:hidden;  
-}  
-  
-/* DARK MODE */  
-body.dark{  
-    background:linear-gradient(135deg,#1e1e1e,#2a2a2a);  
-    color:#eee;  
-}  
-  
-body.dark .poem-card{  
-    background:#2a2a2a;  
-    box-shadow:0 0 15px rgba(255,255,255,0.05);  
-}  
-  
-body.dark .poem-title,  
-body.dark .arrow{  
-    color:#f5f5f5;  
-}  
-  
-/* PARTICLE CANVAS */  
-#particles{  
-    position:fixed;  
-    top:0;  
-    left:0;  
-    width:100%;  
-    height:100%;  
-    z-index:-1;  
-}  
-  
-/* GRID */  
-.poem-container{  
-    display:grid;  
-    grid-template-columns:repeat(2,1fr);  
-    gap:20px;  
-    max-width:900px;  
-    margin:auto;  
-}  
-  
-/* CARD */  
-.poem-card{  
-    background:#fff8f0;  
-    padding:20px;  
-    border-radius:14px;  
-    transition:0.3s;  
-    cursor:pointer;  
-}  
-.poem-card:hover{  
-    transform:scale(1.03);  
-}  
-  
-.poem-title{  
-    display:flex;  
-    justify-content:center;  
-    gap:10px;  
-}  
-  
-.arrow{transition:0.3s;}  
-  
-.poem-text{  
-    display:none;  
-    margin-top:10px;  
-    opacity:0;  
-    transition:0.3s;  
-}  
-.poem-text.active{  
-    display:block;  
-    opacity:1;  
-}  
-  
-/* MODAL */  
-.poem-card.active-focus{  
-    position:fixed;  
-    top:50%;  
-    left:50%;  
-    transform:translate(-50%,-50%);  
-    width:90%;  
-    max-width:700px;  
-    z-index:1000;  
-}  
-  
-/* OVERLAY */  
-.overlay{  
-    position:fixed;  
-    width:100%;  
-    height:100%;  
-    background:rgba(0,0,0,0.5);  
-    top:0;  
-    left:0;  
-    opacity:0;  
-    pointer-events:none;  
-    transition:0.3s;  
-}  
-.overlay.active{  
-    opacity:1;  
-    pointer-events:auto;  
-}  
-  
-/* MOBİL */  
-@media(max-width:600px){  
-    .poem-container{  
-        grid-template-columns:1fr;  
-    }  
-}  
-</style>  </head>  <body>  <canvas id="particles"></canvas>
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Şiir Sesleri</title>
 
-<h1>Şiir Sesleri</h1>  <div class="controls">  
-    <button onclick="randomSiir()">🎲 Rastgele</button>  <select onchange="degistirHiz(this.value)">  
-    <option value="1">Normal</option>  
-    <option value="1.25">Hızlı</option>  
-    <option value="0.75">Yavaş</option>  
-</select>  
+<style>
+body{
+    margin:0;
+    padding:40px 15px;
+    background:linear-gradient(135deg,#fdf6e3,#f5e6ca);
+    font-family:Georgia, serif;
+    text-align:center;
+    color:#3b2f2f;
+    overflow-x:hidden;
+}
 
-<button onclick="tema('light')">☀️</button>  
-<button onclick="tema('dark')">🌙</button>
+/* DARK MODE */
+body.dark{
+    background:linear-gradient(135deg,#1e1e1e,#2a2a2a);
+    color:#eee;
+}
 
-</div>  <div class="poem-container"></div>  
-<div class="overlay" id="overlay"></div>  <script>  
-let currentAudio=null;  
-let currentIndex=1;  
-  
-/* KART */  
-function kart(no){  
-    document.querySelector('.poem-container').innerHTML += `  
-    <div class="poem-card">  
-        <h2 class="poem-title" onclick="siirGoster(event,${no})">  
-            Şiir ${no} <span id="ok${no}" class="arrow">▼</span>  
-        </h2>  
-        <div id="siir${no}" class="poem-text" data-text="Şiir metni buraya gelecek...">  
-            <audio id="audio${no}" controls>  
-                <source src="siir${no}.mp3">  
-            </audio>  
-            <span class="yazi"></span>  
-        </div>  
-    </div>`;  
-}  
-for(let i=1;i<=10;i++){kart(i);}  
-  
-/* TYPE EFFECT */  
-function typeWriter(el, text){  
-    el.innerHTML="";  
-    let i=0;  
-    let interval=setInterval(()=>{  
-        el.innerHTML += text.charAt(i);  
-        i++;  
-        if(i>=text.length) clearInterval(interval);  
-    },20);  
-}  
-  
-/* AÇ */  
-function siirGoster(e,no){  
-    currentIndex=no;  
-    let overlay=document.getElementById("overlay");  
-  
-    for(let i=1;i<=10;i++){  
-        let siir=document.getElementById("siir"+i);  
-        let ok=document.getElementById("ok"+i);  
-        let card=siir.parentElement;  
-  
-        siir.classList.remove("active");  
-        card.classList.remove("active-focus");  
-        ok.style.transform="rotate(0deg)";  
-    }  
-  
-    let siir=document.getElementById("siir"+no);  
-    let ok=document.getElementById("ok"+no);  
-    let card=siir.parentElement;  
-    let audio=document.getElementById("audio"+no);  
-  
-    siir.classList.add("active");  
-    card.classList.add("active-focus");  
-    ok.style.transform="rotate(180deg)";  
-    overlay.classList.add("active");  
-  
-    let text=siir.getAttribute("data-text");  
-    let span=siir.querySelector(".yazi");  
-    typeWriter(span,text);  
-  
-    if(currentAudio){  
-        currentAudio.pause();  
-        currentAudio.currentTime=0;  
-    }  
-    currentAudio=audio;  
-}  
-  
-/* KAPAT */  
-document.getElementById("overlay").onclick=closeAll;  
-  
-function closeAll(){  
-    for(let i=1;i<=10;i++){  
-        let siir=document.getElementById("siir"+i);  
-        let ok=document.getElementById("ok"+i);  
-        let card=siir.parentElement;  
-  
-        siir.classList.remove("active");  
-        card.classList.remove("active-focus");  
-        ok.style.transform="rotate(0deg)";  
-    }  
-    document.getElementById("overlay").classList.remove("active");  
-  
-    if(currentAudio) currentAudio.pause();  
-}  
-  
-/* RANDOM */  
-function randomSiir(){  
-    let no=Math.floor(Math.random()*10)+1;  
-    siirGoster(new Event('click'),no);  
-}  
-  
-/* SPEED */  
-function degistirHiz(hiz){  
-    if(currentAudio){  
-        currentAudio.playbackRate=hiz;  
-    }  
-}  
-  
-/* TEMA */  
-function tema(t){  
-    document.body.classList.remove("dark");  
-    if(t==="dark") document.body.classList.add("dark");  
-}  
-  
-/* SCROLL GEÇİŞ */  
-window.addEventListener("wheel", e=>{  
-    if(document.querySelector(".active-focus")){  
-        if(e.deltaY>0 && currentIndex<10){  
-            siirGoster(new Event('click'), currentIndex+1);  
-        }  
-        if(e.deltaY<0 && currentIndex>1){  
-            siirGoster(new Event('click'), currentIndex-1);  
-        }  
-    }  
-});  
-  
-/* ✨ PARTICLES */  
-const canvas=document.getElementById("particles");  
-const ctx=canvas.getContext("2d");  
-  
-canvas.width=window.innerWidth;  
-canvas.height=window.innerHeight;  
-  
-let particles=[];  
-  
-for(let i=0;i<60;i++){  
-    particles.push({  
-        x:Math.random()*canvas.width,  
-        y:Math.random()*canvas.height,  
-        r:Math.random()*2+1,  
-        dx:(Math.random()-0.5)*0.5,  
-        dy:(Math.random()-0.5)*0.5  
-    });  
-}  
-  
-function draw(){  
-    ctx.clearRect(0,0,canvas.width,canvas.height);  
-  
-    particles.forEach(p=>{  
-        ctx.beginPath();  
-        ctx.arc(p.x,p.y,p.r,0,Math.PI*2);  
-        ctx.fillStyle="rgba(200,200,200,0.3)";  
-        ctx.fill();  
-  
-        p.x+=p.dx;  
-        p.y+=p.dy;  
-  
-        if(p.x<0||p.x>canvas.width) p.dx*=-1;  
-        if(p.y<0||p.y>canvas.height) p.dy*=-1;  
-    });  
-  
-    requestAnimationFrame(draw);  
-}  
-  
-draw();  
-  
-window.addEventListener("resize",()=>{  
-    canvas.width=window.innerWidth;  
-    canvas.height=window.innerHeight;  
-});  
-</script>  </body>  
-</html>  
+body.dark .poem-card{
+    background:#2a2a2a;
+    box-shadow:0 0 15px rgba(255,255,255,0.05);
+}
+
+body.dark .poem-title,
+body.dark .arrow{
+    color:#f5f5f5;
+}
+
+/* PARTICLE CANVAS */
+#particles{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    z-index:-1;
+}
+
+/* GRID */
+.poem-container{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:20px;
+    max-width:900px;
+    margin:auto;
+}
+
+/* CARD */
+.poem-card{
+    background:#fff8f0;
+    padding:20px;
+    border-radius:14px;
+    transition:0.3s;
+    cursor:pointer;
+}
+.poem-card:hover{
+    transform:scale(1.03);
+}
+
+.poem-title{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+}
+
+.arrow{transition:0.3s;}
+
+.poem-text{
+    display:none;
+    margin-top:10px;
+    opacity:0;
+    transition:0.3s;
+}
+.poem-text.active{
+    display:block;
+    opacity:1;
+}
+
+/* MODAL */
+.poem-card.active-focus{
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    width:90%;
+    max-width:700px;
+    z-index:1000;
+}
+
+/* OVERLAY */
+.overlay{
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.5);
+    top:0;
+    left:0;
+    opacity:0;
+    pointer-events:none;
+    transition:0.3s;
+}
+.overlay.active{
+    opacity:1;
+    pointer-events:auto;
+}
+
+/* MOBİL */
+@media(max-width:600px){
+    .poem-container{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+
+</head>
+
+<body>
+
+<canvas id="particles"></canvas>
+
+<h1>Şiir Sesleri</h1>
+
+<div class="controls">
+    <button onclick="randomSiir()">✨ Rastgele Şiir</button>
+
+    <select onchange="degistirHiz(this.value)">
+        <option value="1">🎧 Normal</option>
+        <option value="1.25">⚡ Hızlı</option>
+        <option value="0.75">🐢 Yavaş</option>
+    </select>
+
+    <button onclick="tema('light')">🌼</button>
+    <button onclick="tema('dark')">🌙</button>
+</div>
+
+<div class="poem-container"></div>
+<div class="overlay" id="overlay"></div>
+
+<script>
+let currentAudio=null;
+let currentIndex=1;
+
+/* KART */
+function kart(no){
+    document.querySelector('.poem-container').innerHTML += `
+    <div class="poem-card">
+        <h2 class="poem-title" onclick="siirGoster(event,${no})">
