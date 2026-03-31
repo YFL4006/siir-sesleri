@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Şiir Sesleri</title>
 
+<!-- ICON LIBRARY -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 <style>
 body{
     margin:0;
@@ -32,7 +35,7 @@ body.dark .arrow{
     color:#f5f5f5;
 }
 
-/* PARTICLE CANVAS */
+/* PARTICLES */
 #particles{
     position:fixed;
     top:0;
@@ -40,6 +43,46 @@ body.dark .arrow{
     width:100%;
     height:100%;
     z-index:-1;
+}
+
+/* CONTROLS */
+.controls{
+    margin-bottom:20px;
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.btn{
+    border:none;
+    padding:10px 14px;
+    border-radius:12px;
+    font-size:18px;
+    cursor:pointer;
+    background:#ffffffaa;
+    backdrop-filter:blur(6px);
+    transition:0.3s;
+}
+
+.btn:hover{
+    transform:scale(1.1);
+}
+
+.select{
+    padding:8px;
+    border-radius:8px;
+    border:none;
+}
+
+body.dark .btn{
+    background:#333;
+    color:#fff;
+}
+
+body.dark .select{
+    background:#333;
+    color:#fff;
 }
 
 /* GRID */
@@ -110,7 +153,7 @@ body.dark .arrow{
     pointer-events:auto;
 }
 
-/* MOBİL */
+/* MOBILE */
 @media(max-width:600px){
     .poem-container{
         grid-template-columns:1fr;
@@ -126,16 +169,23 @@ body.dark .arrow{
 <h1>Şiir Sesleri</h1>
 
 <div class="controls">
-    <button onclick="randomSiir()">🎲 Rastgele</button>
+    <button class="btn" onclick="randomSiir()">
+        <i class="fa-solid fa-dice"></i>
+    </button>
 
-    <select onchange="degistirHiz(this.value)">
-        <option value="1">Normal</option>
-        <option value="1.25">Hızlı</option>
-        <option value="0.75">Yavaş</option>
+    <select class="select" onchange="degistirHiz(this.value)">
+        <option value="1">⚡ 1x</option>
+        <option value="1.25">🚀 1.25x</option>
+        <option value="0.75">🐢 0.75x</option>
     </select>
 
-    <button onclick="tema('light')">☀️</button>
-    <button onclick="tema('dark')">🌙</button>
+    <button class="btn" onclick="tema('light')" id="lightBtn">
+        <i class="fa-solid fa-sun"></i>
+    </button>
+
+    <button class="btn" onclick="tema('dark')" id="darkBtn">
+        <i class="fa-solid fa-moon"></i>
+    </button>
 </div>
 
 <div class="poem-container"></div>
@@ -157,152 +207,3 @@ function kart(no){
                 <source src="siir${no}.mp3">
             </audio>
             <span class="yazi"></span>
-        </div>
-    </div>`;
-}
-for(let i=1;i<=10;i++){kart(i);}
-
-/* TYPE EFFECT */
-function typeWriter(el, text){
-    el.innerHTML="";
-    let i=0;
-    let interval=setInterval(()=>{
-        el.innerHTML += text.charAt(i);
-        i++;
-        if(i>=text.length) clearInterval(interval);
-    },20);
-}
-
-/* AÇ */
-function siirGoster(e,no){
-    currentIndex=no;
-    let overlay=document.getElementById("overlay");
-
-    for(let i=1;i<=10;i++){
-        let siir=document.getElementById("siir"+i);
-        let ok=document.getElementById("ok"+i);
-        let card=siir.parentElement;
-
-        siir.classList.remove("active");
-        card.classList.remove("active-focus");
-        ok.style.transform="rotate(0deg)";
-    }
-
-    let siir=document.getElementById("siir"+no);
-    let ok=document.getElementById("ok"+no);
-    let card=siir.parentElement;
-    let audio=document.getElementById("audio"+no);
-
-    siir.classList.add("active");
-    card.classList.add("active-focus");
-    ok.style.transform="rotate(180deg)";
-    overlay.classList.add("active");
-
-    let text=siir.getAttribute("data-text");
-    let span=siir.querySelector(".yazi");
-    typeWriter(span,text);
-
-    if(currentAudio){
-        currentAudio.pause();
-        currentAudio.currentTime=0;
-    }
-    currentAudio=audio;
-}
-
-/* KAPAT */
-document.getElementById("overlay").onclick=closeAll;
-
-function closeAll(){
-    for(let i=1;i<=10;i++){
-        let siir=document.getElementById("siir"+i);
-        let ok=document.getElementById("ok"+i);
-        let card=siir.parentElement;
-
-        siir.classList.remove("active");
-        card.classList.remove("active-focus");
-        ok.style.transform="rotate(0deg)";
-    }
-    document.getElementById("overlay").classList.remove("active");
-
-    if(currentAudio) currentAudio.pause();
-}
-
-/* RANDOM */
-function randomSiir(){
-    let no=Math.floor(Math.random()*10)+1;
-    siirGoster(new Event('click'),no);
-}
-
-/* SPEED */
-function degistirHiz(hiz){
-    if(currentAudio){
-        currentAudio.playbackRate=hiz;
-    }
-}
-
-/* TEMA */
-function tema(t){
-    document.body.classList.remove("dark");
-    if(t==="dark") document.body.classList.add("dark");
-}
-
-/* SCROLL GEÇİŞ */
-window.addEventListener("wheel", e=>{
-    if(document.querySelector(".active-focus")){
-        if(e.deltaY>0 && currentIndex<10){
-            siirGoster(new Event('click'), currentIndex+1);
-        }
-        if(e.deltaY<0 && currentIndex>1){
-            siirGoster(new Event('click'), currentIndex-1);
-        }
-    }
-});
-
-/* ✨ PARTICLES */
-const canvas=document.getElementById("particles");
-const ctx=canvas.getContext("2d");
-
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
-
-let particles=[];
-
-for(let i=0;i<60;i++){
-    particles.push({
-        x:Math.random()*canvas.width,
-        y:Math.random()*canvas.height,
-        r:Math.random()*2+1,
-        dx:(Math.random()-0.5)*0.5,
-        dy:(Math.random()-0.5)*0.5
-    });
-}
-
-function draw(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-
-    particles.forEach(p=>{
-        ctx.beginPath();
-        ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-        ctx.fillStyle="rgba(200,200,200,0.3)";
-        ctx.fill();
-
-        p.x+=p.dx;
-        p.y+=p.dy;
-
-        if(p.x<0||p.x>canvas.width) p.dx*=-1;
-        if(p.y<0||p.y>canvas.height) p.dy*=-1;
-    });
-
-    requestAnimationFrame(draw);
-}
-
-draw();
-
-window.addEventListener("resize",()=>{
-    canvas.width=window.innerWidth;
-    canvas.height=window.innerHeight;
-});
-</script>
-
-</body>
-</html>
