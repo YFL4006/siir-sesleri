@@ -5,260 +5,430 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Şiir Sesleri</title>
 
-<!-- ICON LIBRARY -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
 <style>
 body{
     margin:0;
-@@ -32,7 +35,7 @@
-    color:#f5f5f5;
-}
-
-/* PARTICLE CANVAS */
-/* PARTICLES */
-#particles{
-    position:fixed;
-    top:0;
-@@ -42,6 +45,46 @@
-    z-index:-1;
-}
-
-/* CONTROLS */
-.controls{
-    margin-bottom:20px;
-    display:flex;
-    justify-content:center;
-    gap:10px;
-    flex-wrap:wrap;
-}
-
-.btn{
-    border:none;
-    padding:10px 14px;
-    border-radius:12px;
-    font-size:18px;
-    cursor:pointer;
-    background:#ffffffaa;
-    backdrop-filter:blur(6px);
+    padding:40px 15px;
+    background-color:#fdf6e3;
+    font-family:Georgia, serif;
+    text-align:center;
+    color:#3b2f2f;
     transition:0.3s;
 }
 
-.btn:hover{
-    transform:scale(1.1);
+/* TEMALAR */
+body.dark{
+    background:#1e1e1e;
+    color:#eee;
+}
+body.parchment{
+    background:#f4ecd8;
 }
 
-.select{
-    padding:8px;
+/* Arka plan */
+/* ARKA PLAN */
+body::before{
+    content:"";
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    width:90vw;
+    max-width:900px;
+    height:90vw;
+    max-height:900px;
+    background-image:url("yunusemre.png");
+    background-repeat:no-repeat;
+    background-position:center;
+    background-size:contain;
+    opacity:0.12;
+    z-index:-1;
+    transition:transform 0.1s;
+}
+
+h1{font-size:2.2em;}
+h1{font-size:2em;}
+
+.quote{
+    font-style:italic;
+    margin-bottom:15px;
+.controls{
+    margin-bottom:20px;
+}
+
+/* SEARCH */
+.search-box{
+    width:90%;
+    max-width:400px;
+    padding:12px;
+    margin-bottom:25px;
+    border-radius:10px;
+    border:1px solid #ccc;
+    font-size:16px;
+button, select{
+    padding:8px 12px;
+    margin:5px;
     border-radius:8px;
     border:none;
-}
-
-body.dark .btn{
-    background:#333;
-    color:#fff;
-}
-
-body.dark .select{
-    background:#333;
-    color:#fff;
+    cursor:pointer;
 }
 
 /* GRID */
 .poem-container{
     display:grid;
-@@ -110,7 +153,7 @@
+    grid-template-columns:repeat(2, 1fr);
+    grid-template-columns:repeat(2,1fr);
+    gap:20px;
+    max-width:900px;
+    margin:auto;
+}
+
+/* OVERLAY */
+.overlay{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.5);
+    opacity:0;
+    pointer-events:none;
+    transition:0.3s;
+    z-index:500;
+}
+
+.overlay.active{
+    opacity:1;
     pointer-events:auto;
 }
 
+/* CARD */
+.poem-card{
+    background:#fff8f0;
+    padding:20px;
+    border-radius:14px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.1);
+    transition:0.3s;
+    cursor:pointer;
+}
+
+.poem-card:hover{
+    transform:translateY(-5px) scale(1.02);
+    background-color:#fff1e0;
+}
+
+.poem-title{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+}
+
+.arrow{transition:0.3s;}
+
+.poem-text{
+    display:none;
+    margin-top:15px;
+    white-space:pre-line;
+    font-style:italic;
+    font-weight:bold;
+    transform:scale(1.03);
+}
+
+/* MODAL */
+.poem-card.active-focus{
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%) scale(1);
+    z-index:1000;
+    transform:translate(-50%,-50%);
+    width:90%;
+    max-width:700px;
+    box-shadow:0 10px 40px rgba(0,0,0,0.3);
+    z-index:1000;
+    background:#fff8f0;
+    animation:fadeInScale 0.3s forwards;
+}
+
+@keyframes fadeInScale{
+    from { opacity:0; transform:translate(-50%,-50%) scale(0.9);}
+    to { opacity:1; transform:translate(-50%,-50%) scale(1);}
+.poem-text{
+    display:none;
+    margin-top:10px;
+}
+
+.poem-text.active{
+    display:block;
+}
+
+/* AUDIO */
+audio{
+    width:100%;
+    margin-top:10px;
+}
+audio{width:100%;}
+
+/* SIGNATURE */
+.signature{
+.overlay{
+    position:fixed;
+    bottom:15px;
+    right:15px;
+    font-weight:bold;
+    font-style:italic;
+    opacity:0.7;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.5);
+    top:0;
+    left:0;
+    opacity:0;
+    pointer-events:none;
+    transition:0.3s;
+}
+.overlay.active{
+    opacity:1;
+    pointer-events:auto;
+}
+
+/* 📱 MOBİL OPTİMİZASYON */
 /* MOBİL */
-/* MOBILE */
 @media(max-width:600px){
+
+    body{
+        padding:20px 10px;
+    }
+
+    h1{
+        font-size:1.8em;
+    }
+
     .poem-container{
         grid-template-columns:1fr;
-@@ -126,16 +169,23 @@
+        gap:15px;
+    }
+
+    .poem-card{
+        padding:18px;
+        border-radius:12px;
+    }
+
+    .poem-title{
+        font-size:1.2em;
+    }
+
+    .poem-text{
+        font-size:1.05em;
+        line-height:1.6;
+    }
+
+    /* MOBİLDE FULL SCREEN MODAL */
+    .poem-card.active-focus{
+        width:95%;
+        height:auto;
+        max-height:85vh;
+        overflow-y:auto;
+        border-radius:16px;
+    }
+
+    audio{
+        height:40px;
+    }
+
+    .search-box{
+        font-size:15px;
+        padding:10px;
+    }
+}
+</style>
+@@ -206,122 +129,116 @@
+
 <h1>Şiir Sesleri</h1>
 
+<div class="quote">
+“Sevelim sevilelim, dünya kimseye kalmaz.” <br>
+— Yunus Emre
+</div>
 <div class="controls">
     <button onclick="randomSiir()">🎲 Rastgele</button>
 
+<input class="search-box" id="search" onkeyup="filterPoems()" placeholder="Şiir ara...">
     <select onchange="degistirHiz(this.value)">
         <option value="1">Normal</option>
         <option value="1.25">Hızlı</option>
         <option value="0.75">Yavaş</option>
-    <button class="btn" onclick="randomSiir()">
-        <i class="fa-solid fa-dice"></i>
-    </button>
-
-    <select class="select" onchange="degistirHiz(this.value)">
-        <option value="1">⚡ 1x</option>
-        <option value="1.25">🚀 1.25x</option>
-        <option value="0.75">🐢 0.75x</option>
     </select>
 
+<div class="poem-container"></div>
     <button onclick="tema('light')">☀️</button>
     <button onclick="tema('dark')">🌙</button>
-    <button class="btn" onclick="tema('light')" id="lightBtn">
-        <i class="fa-solid fa-sun"></i>
-    </button>
-
-    <button class="btn" onclick="tema('dark')" id="darkBtn">
-        <i class="fa-solid fa-moon"></i>
-    </button>
+    <button onclick="tema('parchment')">📜</button>
 </div>
 
 <div class="poem-container"></div>
-@@ -157,152 +207,3 @@
+<div class="overlay" id="overlay"></div>
+
+<div class="signature">ahmaddarrak7765</div>
+
+<script>
+let openSound = new Audio('bloop.mp3');
+let closeSound = new Audio('pageflip.mp3');
+let currentAudio = null;
+
+function kart(no, baslik){
+/* KART */
+function kart(no){
+    document.querySelector('.poem-container').innerHTML += `
+    <div class="poem-card" data-title="${baslik}">
+        <h2 class="poem-title" onclick="siirGoster(event, ${no})">
+        ${baslik} <span id="ok${no}" class="arrow">▼</span>
+        </h2>
+    <div class="poem-card">
+        <h2 onclick="siirGoster(event,${no})">Şiir ${no}</h2>
+        <div id="siir${no}" class="poem-text">
+            <audio id="audio${no}" controls>
+            <source src="siir${no}.mp3" type="audio/mpeg">
                 <source src="siir${no}.mp3">
             </audio>
-            <span class="yazi"></span>
+            Şiir metni buraya gelecek...
+            Şiir metni...
         </div>
     </div>`;
 }
 for(let i=1;i<=10;i++){kart(i);}
 
-/* TYPE EFFECT */
-function typeWriter(el, text){
-    el.innerHTML="";
-    let i=0;
-    let interval=setInterval(()=>{
-        el.innerHTML += text.charAt(i);
-        i++;
-        if(i>=text.length) clearInterval(interval);
-    },20);
+for(let i=1;i<=10;i++){ kart(i,"Şiir "+i); }
+
+function fadeAudio(audio, type){
+    let step=50;
+    if(type==='in'){
+        audio.volume=0;
+        audio.play();
+        let fade = setInterval(()=>{
+            audio.volume+=0.05;
+            if(audio.volume>=0.2){ audio.volume=0.2; clearInterval(fade);}
+        }, step);
+    } else {
+        let fade = setInterval(()=>{
+            audio.volume-=0.05;
+            if(audio.volume<=0){
+                audio.pause();
+                audio.currentTime=0;
+                clearInterval(fade);
+            }
+        }, step);
+    }
 }
 
+function siirGoster(event,no){
+    event.stopPropagation();
+    let overlay = document.getElementById("overlay");
 /* AÇ */
 function siirGoster(e,no){
-    currentIndex=no;
     let overlay=document.getElementById("overlay");
 
-    for(let i=1;i<=10;i++){
-        let siir=document.getElementById("siir"+i);
-        let ok=document.getElementById("ok"+i);
-        let card=siir.parentElement;
+    document.querySelectorAll(".poem-text").forEach(el=>{
+        el.classList.remove("active");
+        let a = el.querySelector("audio");
+        if(a) fadeAudio(a,'out');
+    });
 
-        siir.classList.remove("active");
-        card.classList.remove("active-focus");
-        ok.style.transform="rotate(0deg)";
-    }
+    document.querySelectorAll(".poem-card").forEach(c=>{
+        c.classList.remove("active-focus");
+    });
 
+    let siir = document.getElementById("siir"+no);
+    let card = siir.parentElement;
+    let audio = document.getElementById("audio"+no);
     let siir=document.getElementById("siir"+no);
-    let ok=document.getElementById("ok"+no);
     let card=siir.parentElement;
     let audio=document.getElementById("audio"+no);
 
     siir.classList.add("active");
     card.classList.add("active-focus");
-    ok.style.transform="rotate(180deg)";
     overlay.classList.add("active");
 
-    let text=siir.getAttribute("data-text");
-    let span=siir.querySelector(".yazi");
-    typeWriter(span,text);
-
+    openSound.currentTime=0;
+    openSound.play();
+    fadeAudio(audio,'in');
+}
     if(currentAudio){
         currentAudio.pause();
         currentAudio.currentTime=0;
     }
+
+document.getElementById("overlay").onclick = closeAll;
     currentAudio=audio;
 }
 
-/* KAPAT */
-document.getElementById("overlay").onclick=closeAll;
-
 function closeAll(){
-    for(let i=1;i<=10;i++){
-        let siir=document.getElementById("siir"+i);
-        let ok=document.getElementById("ok"+i);
-        let card=siir.parentElement;
+/* KAPAT */
+document.getElementById("overlay").onclick=()=>{
+    document.querySelectorAll(".poem-text").forEach(el=>{
+        el.classList.remove("active");
+        let a = el.querySelector("audio");
+        if(a) fadeAudio(a,'out');
+    });
 
-        siir.classList.remove("active");
-        card.classList.remove("active-focus");
-        ok.style.transform="rotate(0deg)";
-    }
+    document.querySelectorAll(".poem-card").forEach(c=>{
+        c.classList.remove("active-focus");
+    });
+
     document.getElementById("overlay").classList.remove("active");
 
-    if(currentAudio) currentAudio.pause();
+    closeSound.currentTime=0;
+    closeSound.play();
+    if(currentAudio){
+        currentAudio.pause();
+    }
 }
 
-/* RANDOM */
+function normalizeText(text){
+    return text.toLowerCase()
+        .replace(/ı/g,"i").replace(/i̇/g,"i")
+        .replace(/ç/g,"c").replace(/ğ/g,"g")
+        .replace(/ş/g,"s")
+        .replace(/ö/g,"o").replace(/ü/g,"u");
+/* 🎲 RANDOM */
 function randomSiir(){
     let no=Math.floor(Math.random()*10)+1;
     siirGoster(new Event('click'),no);
 }
 
-/* SPEED */
+function filterPoems(){
+    let input = normalizeText(document.getElementById("search").value);
+    document.querySelectorAll(".poem-card").forEach(card=>{
+        let title = normalizeText(card.getAttribute("data-title"));
+        card.style.display = title.includes(input) ? "block" : "none";
+    });
+/* 🎧 SPEED */
 function degistirHiz(hiz){
     if(currentAudio){
         currentAudio.playbackRate=hiz;
     }
 }
 
-/* TEMA */
+/* 🎨 TEMA */
 function tema(t){
-    document.body.classList.remove("dark");
+    document.body.classList.remove("dark","parchment");
     if(t==="dark") document.body.classList.add("dark");
+    if(t==="parchment") document.body.classList.add("parchment");
 }
 
-/* SCROLL GEÇİŞ */
-window.addEventListener("wheel", e=>{
-    if(document.querySelector(".active-focus")){
-        if(e.deltaY>0 && currentIndex<10){
-            siirGoster(new Event('click'), currentIndex+1);
-        }
-        if(e.deltaY<0 && currentIndex>1){
-            siirGoster(new Event('click'), currentIndex-1);
-        }
-    }
-});
+/* 🌀 PARALLAX */
+document.addEventListener("mousemove", e=>{
+    let x=(e.clientX/window.innerWidth-0.5)*20;
+    let y=(e.clientY/window.innerHeight-0.5)*20;
 
-/* ✨ PARTICLES */
-const canvas=document.getElementById("particles");
-const ctx=canvas.getContext("2d");
+    document.body.style.setProperty('--x', x+'px');
+    document.body.style.setProperty('--y', y+'px');
 
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
+    document.body.style.backgroundPosition = `${50+x/5}% ${50+y/5}%`;
 
-let particles=[];
-
-for(let i=0;i<60;i++){
-    particles.push({
-        x:Math.random()*canvas.width,
-        y:Math.random()*canvas.height,
-        r:Math.random()*2+1,
-        dx:(Math.random()-0.5)*0.5,
-        dy:(Math.random()-0.5)*0.5
-    });
-}
-
-function draw(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-
-    particles.forEach(p=>{
-        ctx.beginPath();
-        ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-        ctx.fillStyle="rgba(200,200,200,0.3)";
-        ctx.fill();
-
-        p.x+=p.dx;
-        p.y+=p.dy;
-
-        if(p.x<0||p.x>canvas.width) p.dx*=-1;
-        if(p.y<0||p.y>canvas.height) p.dy*=-1;
-    });
-
-    requestAnimationFrame(draw);
-}
-
-draw();
-
-window.addEventListener("resize",()=>{
-    canvas.width=window.innerWidth;
-    canvas.height=window.innerHeight;
+    document.body.style.transform = `translate(${x/50}px,${y/50}px)`;
 });
 </script>
 
 </body>
-</html>
-    
