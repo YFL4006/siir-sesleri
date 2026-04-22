@@ -2,118 +2,99 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Şiir Sesleri</title>
 
 <style>
 body{
     margin:0;
     padding:40px 15px;
-    background:linear-gradient(135deg,#fdf6e3,#f5e6ca);
+    background-color:#fdf6e3;
     font-family:Georgia, serif;
     text-align:center;
     color:#3b2f2f;
-    overflow-x:hidden;
 }
 
-/* DARK MODE */
-body.dark{
-    background:linear-gradient(135deg,#1e1e1e,#2a2a2a);
-    color:#eee;
-}
-
-body.dark .poem-card{
-    background:#2a2a2a;
-    box-shadow:0 0 15px rgba(255,255,255,0.05);
-}
-
-body.dark .poem-title,
-body.dark .arrow{
-    color:#f5f5f5;
-}
-
-/* PARTICLE CANVAS */
-#particles{
+/* Arka plan */
+body::before{
+    content:"";
     position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    width:90vw;
+    max-width:900px;
+    height:90vw;
+    max-height:900px;
+    background-image:url("yunusemre.png");
+    background-repeat:no-repeat;
+    background-position:center;
+    background-size:contain;
+    opacity:0.12;
     z-index:-1;
+}
+
+h1{font-size:2.2em;}
+
+.quote{
+    font-style:italic;
+    margin-bottom:15px;
+}
+
+/* SEARCH */
+.search-box{
+    width:90%;
+    max-width:400px;
+    padding:12px;
+    margin-bottom:25px;
+    border-radius:10px;
+    border:1px solid #ccc;
+    font-size:16px;
 }
 
 /* GRID */
 .poem-container{
     display:grid;
-    grid-template-columns:repeat(2,1fr);
+    grid-template-columns:repeat(2, 1fr);
     gap:20px;
     max-width:900px;
     margin:auto;
-}
-
-/* CARD */
-.poem-card{
-    background:#fff8f0;
-    padding:20px;
-    border-radius:14px;
-    transition:0.3s;
-    cursor:pointer;
-}
-.poem-card:hover{
-    transform:scale(1.03);
-}
-
-.poem-title{
-    display:flex;
-    justify-content:center;
-    gap:10px;
-}
-
-.arrow{transition:0.3s;}
-
-.poem-text{
-    display:none;
-    margin-top:10px;
-    opacity:0;
     transition:0.3s;
 }
-.poem-text.active{
-    display:block;
-    opacity:1;
-}
 
-/* MODAL */
-.poem-card.active-focus{
-    position:fixed;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    width:90%;
-    max-width:700px;
-    z-index:1000;
-}
-
-/* OVERLAY */
+/* BLUR EFFECT WHEN MODAL OPEN, EXCEPT ACTIVE CARD */
+.poem-container.modal-open .poem-card:not(.active-focus){
+    filter: blur(3px);
+    opacity:0.4;
+/* DARK OVERLAY WHEN MODAL OPEN */
 .overlay{
     position:fixed;
+    top:0;
+    left:0;
     width:100%;
     height:100%;
     background:rgba(0,0,0,0.5);
-    top:0;
-    left:0;
     opacity:0;
     pointer-events:none;
     transition:0.3s;
+    z-index:500;
 }
+
 .overlay.active{
     opacity:1;
     pointer-events:auto;
 }
 
-/* MOBİL */
-@media(max-width:600px){
-    .poem-container{
-        grid-template-columns:1fr;
+/* CARD */
+@@ -120,7 +133,7 @@
+/* ANIMATION */
+@keyframes fadeInScale{
+    0% { opacity:0; transform:translate(-50%, -50%) scale(0.9);}
+    100% { opacity:1; transform:translate(-50%, -50%) scale(1.1);}
+    100% { opacity:1; transform:translate(-50%, -50%) scale(1.05);}
+}
+
+.poem-text.active{
+@@ -152,7 +165,6 @@
     }
 }
 </style>
@@ -121,33 +102,202 @@ body.dark .arrow{
 </head>
 
 <body>
+@@ -167,10 +179,22 @@
+<!-- SEARCH -->
+<input class="search-box" id="search" onkeyup="filterPoems()" placeholder="Şiir ara...">
 
-<canvas id="particles"></canvas>
-
-<h1>Şiir Sesleri</h1>
-
-<div class="controls">
-    <button onclick="randomSiir()">✨ Rastgele Şiir</button>
-
-    <select onchange="degistirHiz(this.value)">
-        <option value="1">🎧 Normal</option>
-        <option value="1.25">⚡ Hızlı</option>
-        <option value="0.75">🐢 Yavaş</option>
-    </select>
-
-    <button onclick="tema('light')">🌼</button>
-    <button onclick="tema('dark')">🌙</button>
-</div>
-
+<div class="poem-container">
 <div class="poem-container"></div>
+
+<!-- DARK OVERLAY -->
 <div class="overlay" id="overlay"></div>
 
-<script>
-let currentAudio=null;
-let currentIndex=1;
+<!-- SIGNATURE -->
+<div class="signature">ahmaddarrak7765</div>
 
-/* KART */
-function kart(no){
+<script>
+// SOUNDS
+let openSound = new Audio('bloop.mp3');      // kart açılınca
+let closeSound = new Audio('pageflip.mp3');  // kart kapanınca
+
+// CREATE CARDS
+function kart(no, baslik){
+    document.write(`
     document.querySelector('.poem-container').innerHTML += `
-    <div class="poem-card">
-        <h2 class="poem-title" onclick="siirGoster(event,${no})">
+    <div class="poem-card" data-title="${baslik}">
+        <h2 class="poem-title" onclick="siirGoster(event, ${no})">
+        ${baslik} <span id="ok${no}" class="arrow">▼</span>
+@@ -179,129 +203,105 @@
+            <audio id="audio${no}" controls>
+            <source src="siir${no}.mp3" type="audio/mpeg">
+            </audio>
+
+            Şiir metni buraya gelecek...
+        </div>
+    </div>
+    `);
+    </div>`;
+}
+
+for(let i=1;i<=10;i++){
+    kart(i,"Şiir "+i);
+}
+</script>
+</div>
+for(let i=1;i<=10;i++){ kart(i,"Şiir "+i); }
+
+<!-- SIGNATURE -->
+<div class="signature">ahmaddarrak7765</div>
+
+<script>
+// AUDIO FADE IN / OUT
+function fadeAudio(audio, type, duration = 500){
+    let step = 50;
+    let interval = duration / (duration/step);
+    if(type === 'in'){
+        audio.volume = 0;
+function fadeAudio(audio, type, duration=500){
+    let step=50;
+    if(type==='in'){
+        audio.volume=0;
+        audio.play();
+        let vol = 0;
+        let vol=0;
+        let fadeIn = setInterval(()=>{
+            vol += 0.05;
+            if(vol >= 0.2){ audio.volume = 0.2; clearInterval(fadeIn);}
+            else audio.volume = vol;
+            vol+=0.05;
+            if(vol>=0.2){ audio.volume=0.2; clearInterval(fadeIn);}
+            else audio.volume=vol;
+        }, step);
+    } else {
+        let fadeOut = setInterval(()=>{
+            audio.volume -= 0.05;
+            if(audio.volume <= 0){ audio.pause(); audio.currentTime=0; clearInterval(fadeOut);}
+            audio.volume-=0.05;
+            if(audio.volume<=0){ audio.pause(); audio.currentTime=0; clearInterval(fadeOut);}
+        }, step);
+    }
+}
+
+// 📌 SINGLE OPEN + MODAL + BLUR
+function siirGoster(event, no){
+// OPEN/CLOSE CARD
+function siirGoster(event,no){
+    event.stopPropagation();
+    let container = document.querySelector(".poem-container");
+    let overlay = document.getElementById("overlay");
+
+    for(let i=1;i<=10;i++){
+        let siir = document.getElementById("siir"+i);
+        let ok = document.getElementById("ok"+i);
+        let card = siir.parentElement;
+        let audio = document.getElementById("audio"+i);
+
+        if(i === no){
+        if(i===no){
+            let aktif = siir.classList.contains("active");
+
+            // Tüm kartları kapat
+            // CLOSE ALL
+            document.querySelectorAll(".poem-text").forEach(el=>{
+                el.classList.remove("active");
+                let a = el.querySelector("audio");
+                if(a){ fadeAudio(a,'out'); }
+                if(a) fadeAudio(a,'out');
+            });
+
+            document.querySelectorAll(".arrow").forEach(el=>{ el.style.transform="rotate(0deg)"; });
+            document.querySelectorAll(".poem-card").forEach(c=>{ c.classList.remove("active-focus"); });
+
+            if(!aktif){
+                // Aktif kart aç
+                siir.classList.add("active");
+                ok.style.transform="rotate(180deg)";
+                container.classList.add("modal-open");
+                card.classList.add("active-focus");
+                overlay.classList.add("active");
+                openSound.currentTime=0; openSound.play();
+                fadeAudio(audio,'in');
+            } else {
+                container.classList.remove("modal-open");
+                overlay.classList.remove("active");
+                closeSound.currentTime=0; closeSound.play();
+            }
+        }
+    }
+}
+
+// 🔍 FILTER
+// CLOSE MODAL ON CLICK OUTSIDE OR ESC
+document.getElementById("overlay").addEventListener("click", closeAll);
+document.addEventListener("keydown", function(e){
+    if(e.key==="Escape") closeAll();
+});
+
+function closeAll(){
+    document.querySelectorAll(".poem-text").forEach(el=>{
+        el.classList.remove("active");
+        let a = el.querySelector("audio");
+        if(a) fadeAudio(a,'out');
+    });
+    document.querySelectorAll(".arrow").forEach(el=>{ el.style.transform="rotate(0deg)"; });
+    document.querySelectorAll(".poem-card").forEach(c=>{ c.classList.remove("active-focus"); });
+    document.getElementById("overlay").classList.remove("active");
+    closeSound.currentTime=0; closeSound.play();
+}
+
+// SEARCH FILTER
+function normalizeText(text){
+    return text.toLowerCase()
+        .replace(/ı/g,"i")
+        .replace(/i̇/g,"i")
+        .replace(/ç/g,"c")
+        .replace(/ğ/g,"g")
+        .replace(/ı/g,"i").replace(/i̇/g,"i")
+        .replace(/ç/g,"c").replace(/ğ/g,"g")
+        .replace(/ş/g,"s")
+        .replace(/ö/g,"o")
+        .replace(/ü/g,"u");
+        .replace(/ö/g,"o").replace(/ü/g,"u");
+}
+
+function filterPoems(){
+    let input = normalizeText(document.getElementById("search").value);
+    document.querySelectorAll(".poem-card").forEach(card=>{
+        let title = normalizeText(card.getAttribute("data-title"));
+        card.style.display = title.includes(input) ? "block" : "none";
+    });
+}
+
+// CLICK OUTSIDE OR ESC TO CLOSE
+document.addEventListener("click", function(e){
+    let container = document.querySelector(".poem-container");
+    if(container.classList.contains("modal-open")){
+        document.querySelectorAll(".poem-text").forEach(el=>{
+            el.classList.remove("active");
+            let a = el.querySelector("audio");
+            if(a){ fadeAudio(a,'out'); }
+        });
+        document.querySelectorAll(".arrow").forEach(el=>{ el.style.transform="rotate(0deg)"; });
+        document.querySelectorAll(".poem-card").forEach(c=>{ c.classList.remove("active-focus"); });
+        container.classList.remove("modal-open");
+    }
+});
+
+document.addEventListener("keydown", function(e){
+    if(e.key === "Escape"){
+        document.querySelectorAll(".poem-text").forEach(el=>{
+            el.classList.remove("active");
+            let a = el.querySelector("audio");
+            if(a){ fadeAudio(a,'out'); }
+        });
+        document.querySelectorAll(".arrow").forEach(el=>{ el.style.transform="rotate(0deg)"; });
+        document.querySelectorAll(".poem-card").forEach(c=>{ c.classList.remove("active-focus"); });
+        document.querySelector(".poem-container").classList.remove("modal-open");
+    }
+});
+</script>
+
+</body>
