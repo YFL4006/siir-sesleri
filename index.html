@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -70,8 +71,9 @@ h1{
 .quote{
     font-style:italic;
     margin-bottom:22px;
-    opacity:.8;
+    opacity:.85;
     line-height:1.7;
+    font-size:18px;
 }
 
 /* controls */
@@ -146,7 +148,7 @@ input{
     transform:rotate(180deg);
 }
 
-/* active modal card */
+/* active modal */
 .poem-card.active{
     position:fixed;
     top:50%;
@@ -155,18 +157,6 @@ input{
     width:min(92%,520px);
     z-index:999;
     box-shadow:0 30px 70px rgba(0,0,0,.35);
-    animation:pop .25s ease;
-}
-
-@keyframes pop{
-    from{
-        opacity:0;
-        transform:translate(-50%,-48%) scale(.95);
-    }
-    to{
-        opacity:1;
-        transform:translate(-50%,-50%) scale(1);
-    }
 }
 
 /* text */
@@ -175,7 +165,7 @@ input{
     opacity:0;
     overflow:hidden;
     transform:translateY(-10px);
-    transition:max-height .6s ease, opacity .4s ease, transform .4s ease;
+    transition:.5s;
     line-height:1.9;
     white-space:pre-line;
 }
@@ -185,6 +175,17 @@ input{
     opacity:1;
     transform:translateY(0);
     padding-top:14px;
+}
+
+/* audio */
+audio{
+    width:100%;
+    margin-top:15px;
+    display:none;
+}
+
+.poem-card.open audio{
+    display:block;
 }
 
 /* mobile */
@@ -221,8 +222,7 @@ input{
 <h1>Şiir Sesleri</h1>
 
 <div class="quote">
-“Sevelim sevilelim, dünya kimseye kalmaz.”<br>
-— Yunus Emre
+Değerle düşün, Bilimle üret, Doğayla yaşa!
 </div>
 
 <div class="controls">
@@ -239,34 +239,39 @@ const siirler = [
 {
 baslik:"Şiir 1",
 metin:`Kalbimde sessiz bir rüzgar,
-Geceye düşer hatıralar.`
+Geceye düşer hatıralar.`,
+ses:"sesler/siir1.mp3"
 },
 {
 baslik:"Şiir 2",
 metin:`Yollar uzun, gözler yorgun,
-Aşk yine bana vurgun.`
+Aşk yine bana vurgun.`,
+ses:"sesler/siir2.mp3"
 },
 {
 baslik:"Şiir 3",
 metin:`Deniz kadar derin sustum,
-Adını içimde duydum.`
+Adını içimde duydum.`,
+ses:"sesler/siir3.mp3"
 },
 {
 baslik:"Şiir 4",
 metin:`Bir yıldız kaydı geceden,
-Ben geçemedim senden.`
+Ben geçemedim senden.`,
+ses:"sesler/siir4.mp3"
 },
 {
 baslik:"Şiir 5",
 metin:`Zaman geçer iz bırakır,
-Giden kalpte sızı yakar.`
+Giden kalpte sızı yakar.`,
+ses:"sesler/siir5.mp3"
 }
 ];
 
 const list = document.getElementById("list");
 
 function render(){
-    list.innerHTML = "";
+    list.innerHTML="";
 
     siirler.forEach((s,i)=>{
         list.innerHTML += `
@@ -275,8 +280,20 @@ function render(){
                 <span>${s.baslik}</span>
                 <span class="arrow">⌄</span>
             </div>
+
             <div class="poem-text">${s.metin}</div>
+
+            <audio controls preload="none">
+                <source src="${s.ses}" type="audio/mpeg">
+            </audio>
         </div>`;
+    });
+}
+
+function stopAllAudio(){
+    document.querySelectorAll("audio").forEach(a=>{
+        a.pause();
+        a.currentTime=0;
     });
 }
 
@@ -284,7 +301,9 @@ function closeCard(){
     document.querySelectorAll(".poem-card").forEach(card=>{
         card.classList.remove("open","active");
     });
+
     document.body.classList.remove("modal-open");
+    stopAllAudio();
 }
 
 function toggleCard(i){
@@ -319,7 +338,6 @@ function tema(t){
     if(t==="dark") document.body.classList.add("dark");
 }
 
-/* esc ile kapat */
 document.addEventListener("keydown",e=>{
     if(e.key==="Escape") closeCard();
 });
@@ -327,15 +345,15 @@ document.addEventListener("keydown",e=>{
 render();
 
 /* particles */
-const canvas = document.getElementById("particles");
-const ctx = canvas.getContext("2d");
+const canvas=document.getElementById("particles");
+const ctx=canvas.getContext("2d");
 
 let w,h;
 let particles=[];
 
 function resize(){
-    w = canvas.width = innerWidth;
-    h = canvas.height = innerHeight;
+    w=canvas.width=innerWidth;
+    h=canvas.height=innerHeight;
 }
 resize();
 addEventListener("resize",resize);
@@ -355,17 +373,19 @@ function animate(){
 
     for(let p of particles){
 
-        p.x += p.dx;
-        p.y += p.dy;
+        p.x+=p.dx;
+        p.y+=p.dy;
 
-        if(p.x<0||p.x>w) p.dx*=-1;
-        if(p.y<0||p.y>h) p.dy*=-1;
+        if(p.x<0||p.x>w)p.dx*=-1;
+        if(p.y<0||p.y>h)p.dy*=-1;
 
         ctx.beginPath();
         ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+
         ctx.fillStyle=document.body.classList.contains("dark")
         ? "rgba(255,255,255,.7)"
         : "rgba(255,255,255,.9)";
+
         ctx.fill();
     }
 
