@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -20,13 +21,6 @@ body.dark{
     --card:#2a2a2a;
 }
 
-body.parchment{
-    --bg1:#f4ecd8;
-    --bg2:#e8dcc0;
-    --text:#3b2f2f;
-    --card:#fff8f0;
-}
-
 *{
     margin:0;
     padding:0;
@@ -42,6 +36,15 @@ body{
     text-align:center;
     overflow-x:hidden;
     transition:.4s;
+}
+
+/* Blur arkaplan */
+body.modal-open .poem-container,
+body.modal-open .controls,
+body.modal-open .quote,
+body.modal-open h1{
+    filter:blur(6px);
+    transition:.3s;
 }
 
 /* PARTICLES */
@@ -76,7 +79,7 @@ h1{
     flex-wrap:wrap;
 }
 
-button,select,input{
+button,input{
     padding:10px 14px;
     border:none;
     border-radius:10px;
@@ -116,6 +119,7 @@ input{
     box-shadow:0 10px 30px rgba(0,0,0,.08);
     transition:.3s;
     overflow:hidden;
+    position:relative;
 }
 
 .poem-card:hover{
@@ -136,6 +140,17 @@ input{
 
 .poem-card.open .arrow{
     transform:rotate(180deg);
+}
+
+/* Ortaya çıkan modal kart */
+.poem-card.active{
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    width:min(90%,500px);
+    z-index:999;
+    box-shadow:0 25px 60px rgba(0,0,0,.35);
 }
 
 /* TEXT */
@@ -199,18 +214,9 @@ input{
 
 <div class="controls">
     <button onclick="randomSiir()">🎲 Rastgele</button>
-
     <input id="search" placeholder="Şiir ara..." onkeyup="filterPoems()">
-
-    <select onchange="degistirHiz(this.value)">
-        <option value="1">Normal</option>
-        <option value="1.25">Hızlı</option>
-        <option value="0.75">Yavaş</option>
-    </select>
-
     <button onclick="tema('light')">☀️</button>
     <button onclick="tema('dark')">🌙</button>
-    <button onclick="tema('parchment')">📜</button>
 </div>
 
 <div class="poem-container" id="list"></div>
@@ -244,7 +250,6 @@ Giden kalpte sızı yakar.`
 }
 ];
 
-let currentSpeed = 1;
 const list = document.getElementById("list");
 
 function render(){
@@ -264,23 +269,26 @@ function render(){
 }
 
 function toggleCard(i){
-    document.getElementById("card-"+i).classList.toggle("open");
+    document.querySelectorAll(".poem-card").forEach(card=>{
+        if(card.id !== "card-"+i){
+            card.classList.remove("open","active");
+        }
+    });
+
+    let card = document.getElementById("card-"+i);
+    card.classList.toggle("open");
+    card.classList.toggle("active");
+
+    if(card.classList.contains("active")){
+        document.body.classList.add("modal-open");
+    }else{
+        document.body.classList.remove("modal-open");
+    }
 }
 
 function randomSiir(){
     let i = Math.floor(Math.random()*siirler.length);
-
-    document.querySelectorAll(".poem-card").forEach(x=>{
-        x.classList.remove("open");
-    });
-
-    let sec = document.getElementById("card-"+i);
-    sec.classList.add("open");
-
-    sec.scrollIntoView({
-        behavior:"smooth",
-        block:"center"
-    });
+    toggleCard(i);
 }
 
 function filterPoems(){
@@ -292,15 +300,9 @@ function filterPoems(){
     });
 }
 
-function degistirHiz(v){
-    currentSpeed = v;
-}
-
 function tema(t){
-    document.body.classList.remove("dark","parchment");
-
+    document.body.classList.remove("dark");
     if(t==="dark") document.body.classList.add("dark");
-    if(t==="parchment") document.body.classList.add("parchment");
 }
 
 render();
