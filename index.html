@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -132,19 +131,24 @@ input{
     transform:translateY(-5px);
 }
 
-.poem-title{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+.poem-header{
     cursor:pointer;
-    font-size:22px;
+    text-align:center;
 }
 
-.arrow{
-    transition:.4s;
+.poem-name{
+    font-size:24px;
+    font-weight:bold;
+    margin-bottom:8px;
 }
 
-.poem-card.open .arrow{
+.poem-read{
+    font-size:15px;
+    opacity:.75;
+    margin-bottom:5px;
+}
+
+.poem-card.open .poem-read{
     transform:rotate(180deg);
 }
 
@@ -177,16 +181,10 @@ input{
     padding-top:14px;
 }
 
-/* AUDIO ORTALI */
-.audio-wrap{
-    display:flex;
-    justify-content:center;
-    margin-top:15px;
-}
-
+/* audio */
 audio{
     width:100%;
-    max-width:320px;
+    margin-top:15px;
     display:none;
 }
 
@@ -215,10 +213,6 @@ audio{
 
     .controls{
         flex-direction:column;
-    }
-
-    audio{
-        max-width:100%;
     }
 }
 </style>
@@ -286,18 +280,18 @@ function render(){
     siirler.forEach((s,i)=>{
         list.innerHTML += `
         <div class="poem-card" data-title="${s.baslik}" id="card-${i}">
-            <div class="poem-title" onclick="toggleCard(${i})">
-                <span>${s.baslik}</span>
-                <span class="arrow">⌄</span>
+            
+            <div class="poem-header" onclick="toggleCard(${i})">
+                <div class="poem-name">${s.baslik}</div>
+                <div class="poem-read">Oku ⌄</div>
             </div>
 
             <div class="poem-text">${s.metin}</div>
 
-            <div class="audio-wrap">
-                <audio controls preload="none">
-                    <source src="${s.ses}" type="audio/mpeg">
-                </audio>
-            </div>
+            <audio controls preload="none">
+                <source src="${s.ses}" type="audio/mpeg">
+            </audio>
+
         </div>`;
     });
 }
