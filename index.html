@@ -177,10 +177,16 @@ input{
     padding-top:14px;
 }
 
-/* audio */
+/* AUDIO ORTALI */
+.audio-wrap{
+    display:flex;
+    justify-content:center;
+    margin-top:15px;
+}
+
 audio{
     width:100%;
-    margin-top:15px;
+    max-width:320px;
     display:none;
 }
 
@@ -209,6 +215,10 @@ audio{
 
     .controls{
         flex-direction:column;
+    }
+
+    audio{
+        max-width:100%;
     }
 }
 </style>
@@ -283,9 +293,11 @@ function render(){
 
             <div class="poem-text">${s.metin}</div>
 
-            <audio controls preload="none">
-                <source src="${s.ses}" type="audio/mpeg">
-            </audio>
+            <div class="audio-wrap">
+                <audio controls preload="none">
+                    <source src="${s.ses}" type="audio/mpeg">
+                </audio>
+            </div>
         </div>`;
     });
 }
