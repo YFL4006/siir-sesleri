@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -38,26 +37,31 @@ body{
     transition:.4s;
 }
 
-/* Blur arkaplan */
-body.modal-open .poem-container,
-body.modal-open .controls,
-body.modal-open .quote,
-body.modal-open h1{
-    filter:blur(6px);
+/* overlay */
+.overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.25);
+    backdrop-filter:blur(7px);
+    opacity:0;
+    pointer-events:none;
     transition:.3s;
+    z-index:500;
 }
 
-/* PARTICLES */
+body.modal-open .overlay{
+    opacity:1;
+    pointer-events:auto;
+}
+
+/* particles */
 #particles{
     position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
+    inset:0;
     z-index:-1;
 }
 
-/* TITLE */
+/* title */
 h1{
     font-size:2.3em;
     margin-bottom:10px;
@@ -70,7 +74,7 @@ h1{
     line-height:1.7;
 }
 
-/* CONTROLS */
+/* controls */
 .controls{
     margin-bottom:28px;
     display:flex;
@@ -82,7 +86,7 @@ h1{
 button,input{
     padding:10px 14px;
     border:none;
-    border-radius:10px;
+    border-radius:12px;
     font-size:15px;
     outline:none;
 }
@@ -91,7 +95,7 @@ button{
     cursor:pointer;
     background:var(--card);
     color:var(--text);
-    transition:.3s;
+    transition:.25s;
 }
 
 button:hover{
@@ -102,7 +106,7 @@ input{
     width:230px;
 }
 
-/* GRID */
+/* grid */
 .poem-container{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
@@ -111,10 +115,10 @@ input{
     margin:auto;
 }
 
-/* CARD */
+/* card */
 .poem-card{
     background:var(--card);
-    border-radius:16px;
+    border-radius:18px;
     padding:20px;
     box-shadow:0 10px 30px rgba(0,0,0,.08);
     transition:.3s;
@@ -142,25 +146,37 @@ input{
     transform:rotate(180deg);
 }
 
-/* Ortaya çıkan modal kart */
+/* active modal card */
 .poem-card.active{
     position:fixed;
     top:50%;
     left:50%;
     transform:translate(-50%,-50%);
-    width:min(90%,500px);
+    width:min(92%,520px);
     z-index:999;
-    box-shadow:0 25px 60px rgba(0,0,0,.35);
+    box-shadow:0 30px 70px rgba(0,0,0,.35);
+    animation:pop .25s ease;
 }
 
-/* TEXT */
+@keyframes pop{
+    from{
+        opacity:0;
+        transform:translate(-50%,-48%) scale(.95);
+    }
+    to{
+        opacity:1;
+        transform:translate(-50%,-50%) scale(1);
+    }
+}
+
+/* text */
 .poem-text{
     max-height:0;
     opacity:0;
     overflow:hidden;
     transform:translateY(-10px);
     transition:max-height .6s ease, opacity .4s ease, transform .4s ease;
-    line-height:1.8;
+    line-height:1.9;
     white-space:pre-line;
 }
 
@@ -171,7 +187,7 @@ input{
     padding-top:14px;
 }
 
-/* MOBILE */
+/* mobile */
 @media(max-width:600px){
 
     body{
@@ -186,11 +202,7 @@ input{
         grid-template-columns:1fr;
     }
 
-    input{
-        width:100%;
-    }
-
-    button{
+    input,button{
         width:100%;
     }
 
@@ -203,6 +215,7 @@ input{
 
 <body>
 
+<div class="overlay" onclick="closeCard()"></div>
 <canvas id="particles"></canvas>
 
 <h1>Şiir Sesleri</h1>
@@ -262,27 +275,28 @@ function render(){
                 <span>${s.baslik}</span>
                 <span class="arrow">⌄</span>
             </div>
-
             <div class="poem-text">${s.metin}</div>
         </div>`;
     });
 }
 
-function toggleCard(i){
+function closeCard(){
     document.querySelectorAll(".poem-card").forEach(card=>{
-        if(card.id !== "card-"+i){
-            card.classList.remove("open","active");
-        }
+        card.classList.remove("open","active");
     });
+    document.body.classList.remove("modal-open");
+}
+
+function toggleCard(i){
 
     let card = document.getElementById("card-"+i);
-    card.classList.toggle("open");
-    card.classList.toggle("active");
+    let alreadyOpen = card.classList.contains("active");
 
-    if(card.classList.contains("active")){
+    closeCard();
+
+    if(!alreadyOpen){
+        card.classList.add("open","active");
         document.body.classList.add("modal-open");
-    }else{
-        document.body.classList.remove("modal-open");
     }
 }
 
@@ -305,9 +319,14 @@ function tema(t){
     if(t==="dark") document.body.classList.add("dark");
 }
 
+/* esc ile kapat */
+document.addEventListener("keydown",e=>{
+    if(e.key==="Escape") closeCard();
+});
+
 render();
 
-/* PARTICLES */
+/* particles */
 const canvas = document.getElementById("particles");
 const ctx = canvas.getContext("2d");
 
@@ -315,19 +334,19 @@ let w,h;
 let particles=[];
 
 function resize(){
-    w = canvas.width = window.innerWidth;
-    h = canvas.height = window.innerHeight;
+    w = canvas.width = innerWidth;
+    h = canvas.height = innerHeight;
 }
 resize();
-window.addEventListener("resize",resize);
+addEventListener("resize",resize);
 
 for(let i=0;i<90;i++){
     particles.push({
         x:Math.random()*w,
         y:Math.random()*h,
         r:Math.random()*2+1,
-        dx:(Math.random()-0.5)*0.5,
-        dy:(Math.random()-0.5)*0.5
+        dx:(Math.random()-.5)*0.5,
+        dy:(Math.random()-.5)*0.5
     });
 }
 
@@ -339,18 +358,14 @@ function animate(){
         p.x += p.dx;
         p.y += p.dy;
 
-        if(p.x<0 || p.x>w) p.dx *= -1;
-        if(p.y<0 || p.y>h) p.dy *= -1;
+        if(p.x<0||p.x>w) p.dx*=-1;
+        if(p.y<0||p.y>h) p.dy*=-1;
 
         ctx.beginPath();
         ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-
-        if(document.body.classList.contains("dark")){
-            ctx.fillStyle="rgba(255,255,255,.7)";
-        }else{
-            ctx.fillStyle="rgba(255,255,255,.9)";
-        }
-
+        ctx.fillStyle=document.body.classList.contains("dark")
+        ? "rgba(255,255,255,.7)"
+        : "rgba(255,255,255,.9)";
         ctx.fill();
     }
 
