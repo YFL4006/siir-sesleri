@@ -61,7 +61,6 @@ h1{font-size:2.3em;margin-bottom:10px;}
     font-style:italic;
     margin-bottom:22px;
     opacity:.85;
-    line-height:1.7;
     font-size:18px;
 }
 
@@ -91,6 +90,7 @@ button:hover{transform:translateY(-3px);}
 button:active{transform:scale(0.9);}
 
 button.random-animate{animation:shake .4s;}
+
 @keyframes shake{
     0%{transform:rotate(0)}
     25%{transform:rotate(-6deg)}
@@ -115,17 +115,14 @@ input{width:230px;}
     padding:20px;
     box-shadow:0 10px 30px rgba(0,0,0,.08);
     transition:.3s;
-    position:relative;
 }
-
-.poem-card:hover{transform:translateY(-5px);}
 
 .poem-card.highlight{
     transform:scale(1.05);
     box-shadow:0 0 25px rgba(255,140,0,.5);
 }
 
-.poem-header{cursor:pointer;text-align:center;}
+.poem-header{cursor:pointer;}
 
 .poem-name{
     font-size:24px;
@@ -133,41 +130,33 @@ input{width:230px;}
     margin-bottom:8px;
 }
 
-.poem-read{
-    font-size:26px;
-    opacity:.9;
-    transition:.3s;
-}
-
 .poem-text{
     max-height:0;
     opacity:0;
     overflow:hidden;
-    transform:translateY(-15px) scale(.98);
-    transition:all .45s cubic-bezier(.22,1,.36,1);
-    line-height:1.9;
+    transition:.4s;
     white-space:pre-line;
 }
 
 .poem-card.open .poem-text{
     max-height:500px;
     opacity:1;
-    transform:translateY(0) scale(1);
-    padding-top:14px;
+    padding-top:10px;
 }
 
+/* modal */
 .poem-card.active{
     position:fixed;
     top:50%;
     left:50%;
-    transform:translate(-50%,-50%) scale(.95);
+    transform:translate(-50%,-50%);
     width:min(92%,520px);
     z-index:999;
-    box-shadow:0 30px 70px rgba(0,0,0,.35);
-    animation:popup .35s ease forwards;
+    animation:popup .3s ease;
 }
 
 @keyframes popup{
+    from{transform:translate(-50%,-50%) scale(.8);}
     to{transform:translate(-50%,-50%) scale(1);}
 }
 
@@ -180,12 +169,12 @@ input{width:230px;}
 <canvas id="particles"></canvas>
 
 <h1>Şiir Sesleri</h1>
-
 <div class="quote">Değerle düşün, Bilimle üret, Doğayla yaşa!</div>
 
 <div class="controls">
     <button id="randomBtn" onclick="randomSiir()">🎲 Rastgele</button>
     <input id="search" placeholder="Şiir ara..." onkeyup="filterPoems()">
+    <button id="themeBtn" onclick="toggleTheme()">🌙</button>
 </div>
 
 <div class="poem-container" id="list"></div>
@@ -200,7 +189,9 @@ const siirler=[
 ];
 
 const list=document.getElementById("list");
+const themeBtn=document.getElementById("themeBtn");
 
+/* render */
 function render(){
     list.innerHTML="";
     siirler.forEach((s,i)=>{
@@ -208,11 +199,18 @@ function render(){
         <div class="poem-card" id="card-${i}">
             <div class="poem-header" onclick="toggleCard(${i})">
                 <div class="poem-name">${s.baslik}</div>
-                <div class="poem-read">⌄</div>
             </div>
             <div class="poem-text">${s.metin}</div>
         </div>`;
     });
+}
+
+/* card */
+function toggleCard(i){
+    let card=document.getElementById("card-"+i);
+    closeCard();
+    card.classList.add("open","active");
+    document.body.classList.add("modal-open");
 }
 
 function closeCard(){
@@ -222,50 +220,36 @@ function closeCard(){
     document.body.classList.remove("modal-open");
 }
 
-function toggleCard(i){
-    let card=document.getElementById("card-"+i);
-    let open=card.classList.contains("active");
-    closeCard();
-    if(!open){
-        card.classList.add("open","active");
-        document.body.classList.add("modal-open");
-    }
-}
-
-/* 🔥 ROULETTE EFFECT */
+/* 🎰 ROULETTE EFFECT */
 function randomSiir(){
     let btn=document.getElementById("randomBtn");
     btn.classList.add("random-animate");
 
     let cards=document.querySelectorAll(".poem-card");
 
-    let speed=80;
     let index=0;
     let rounds=0;
-    let maxRounds=20;
+    let max=18;
 
     let interval=setInterval(()=>{
         cards.forEach(c=>c.classList.remove("highlight"));
-
         cards[index].classList.add("highlight");
 
         index=(index+1)%cards.length;
         rounds++;
 
-        if(rounds>maxRounds){
+        if(rounds>max){
             clearInterval(interval);
 
             let finalIndex=Math.floor(Math.random()*cards.length);
 
-            cards.forEach(c=>c.classList.remove("highlight"));
-
             setTimeout(()=>{
                 toggleCard(finalIndex);
-            },300);
+            },250);
         }
-    },speed);
+    },90);
 
-    setTimeout(()=>btn.classList.remove("random-animate"),400);
+    setTimeout(()=>btn.classList.remove("random-animate"),500);
 }
 
 /* search */
@@ -277,12 +261,32 @@ function filterPoems(){
     });
 }
 
+/* 🌙 THEME */
+function toggleTheme(){
+    document.body.classList.toggle("dark");
+    localStorage.setItem("theme",
+        document.body.classList.contains("dark")?"dark":"light"
+    );
+    updateTheme();
+}
+
+function updateTheme(){
+    themeBtn.innerText=document.body.classList.contains("dark")?"☀️":"🌙";
+}
+
+(function(){
+    if(localStorage.getItem("theme")==="dark"){
+        document.body.classList.add("dark");
+    }
+    updateTheme();
+})();
+
 render();
 
-/* particles (kısaltıldı aynı seninki gibi çalışır) */
+/* particles */
 const canvas=document.getElementById("particles");
 const ctx=canvas.getContext("2d");
-let w,h,particles=[];
+let w,h,p=[];
 
 function resize(){
     w=canvas.width=innerWidth;
@@ -292,7 +296,7 @@ resize();
 addEventListener("resize",resize);
 
 for(let i=0;i<60;i++){
-    particles.push({
+    p.push({
         x:Math.random()*w,
         y:Math.random()*h,
         r:Math.random()*2,
@@ -303,14 +307,13 @@ for(let i=0;i<60;i++){
 
 function animate(){
     ctx.clearRect(0,0,w,h);
-    for(let p of particles){
-        p.x+=p.dx;
-        p.y+=p.dy;
-        if(p.x<0||p.x>w)p.dx*=-1;
-        if(p.y<0||p.y>h)p.dy*=-1;
+    for(let i of p){
+        i.x+=i.dx;i.y+=i.dy;
+        if(i.x<0||i.x>w)i.dx*=-1;
+        if(i.y<0||i.y>h)i.dy*=-1;
 
         ctx.beginPath();
-        ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.arc(i.x,i.y,i.r,0,Math.PI*2);
         ctx.fillStyle="rgba(255,255,255,.8)";
         ctx.fill();
     }
