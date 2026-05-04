@@ -20,6 +20,8 @@ body.dark{
     --card:#2a2a2a;
 }
 
+*{margin:0;padding:0;box-sizing:border-box;}
+
 body{
     font-family:Georgia, serif;
     background:linear-gradient(135deg,var(--bg1),var(--bg2));
@@ -30,96 +32,11 @@ body{
     transition:.4s;
 }
 
-*{margin:0;padding:0;box-sizing:border-box;}
-
+/* particles */
 #particles{
     position:fixed;
     inset:0;
     z-index:-1;
-}
-
-/* grid */
-.poem-container{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-    gap:18px;
-    max-width:950px;
-    margin:auto;
-}
-
-/* CARD */
-.poem-card{
-    background:var(--card);
-    border-radius:18px;
-    padding:20px;
-    box-shadow:0 10px 30px rgba(0,0,0,.08);
-    transition:transform .25s;
-    cursor:pointer;
-}
-
-.poem-card:hover{
-    transform:translateY(-5px);
-}
-
-.poem-name{
-    font-size:22px;
-    font-weight:bold;
-}
-
-/* 🔥 SPRING + BLUR FADE */
-.poem-text{
-    margin-top:10px;
-
-    opacity:0;
-    transform:translateY(-18px) scale(.92);
-    filter:blur(8px);
-
-    transition:
-        opacity .45s cubic-bezier(.2,1,.2,1),
-        transform .55s cubic-bezier(.2,1.4,.2,1),
-        filter .5s ease;
-
-    pointer-events:none;
-}
-
-/* OPEN STATE */
-.poem-card.open .poem-text{
-    opacity:1;
-    transform:translateY(0) scale(1);
-    filter:blur(0);
-    pointer-events:auto;
-
-    /* glow hissi */
-    text-shadow:0 0 10px rgba(255,200,120,.15);
-}
-
-/* ACTIVE CARD (modal hissi) */
-.poem-card.active{
-    position:fixed;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%) scale(.9);
-    width:min(92%,520px);
-    z-index:999;
-
-    animation:springIn .55s cubic-bezier(.2,1.5,.2,1) forwards;
-}
-
-/* 🌀 SPRING ANIMATION */
-@keyframes springIn{
-    0%{
-        transform:translate(-50%,-50%) scale(.85);
-        opacity:0;
-        filter:blur(10px);
-    }
-    60%{
-        transform:translate(-50%,-50%) scale(1.03);
-        opacity:1;
-        filter:blur(0);
-    }
-    100%{
-        transform:translate(-50%,-50%) scale(1);
-    }
 }
 
 /* controls */
@@ -135,20 +52,98 @@ button,input{
     padding:10px 14px;
     border:none;
     border-radius:12px;
+    font-size:15px;
 }
 
 button{
     cursor:pointer;
     background:var(--card);
-    transition:.25s;
+    transition:.2s;
 }
 
-button:active{transform:scale(.92);}
+button:hover{transform:translateY(-3px);}
+button:active{transform:scale(0.92);}
 
 input{width:230px;}
 
-@media(max-width:600px){
-    .poem-container{grid-template-columns:1fr;}
+/* grid */
+.poem-container{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:18px;
+    max-width:950px;
+    margin:auto;
+}
+
+/* card */
+.poem-card{
+    background:var(--card);
+    border-radius:18px;
+    padding:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+    cursor:pointer;
+    transition:.25s;
+}
+
+.poem-card:hover{
+    transform:translateY(-5px);
+}
+
+.poem-name{
+    font-size:22px;
+    font-weight:bold;
+}
+
+/* 🔥 GERÇEK SMOOTH FADE FIX */
+.poem-text{
+    margin-top:10px;
+    opacity:0;
+    transform:translateY(-12px) scale(.96);
+    filter:blur(6px);
+
+    transition:
+        opacity .35s ease,
+        transform .45s cubic-bezier(.2,1.2,.2,1),
+        filter .45s ease;
+
+    pointer-events:none;
+}
+
+/* OPEN */
+.poem-card.open .poem-text{
+    opacity:1;
+    transform:translateY(0) scale(1);
+    filter:blur(0);
+    pointer-events:auto;
+}
+
+/* active modal */
+.poem-card.active{
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    width:min(92%,520px);
+    z-index:999;
+    animation:pop .4s cubic-bezier(.2,1.3,.2,1);
+}
+
+@keyframes pop{
+    0%{transform:translate(-50%,-50%) scale(.85);opacity:0}
+    100%{transform:translate(-50%,-50%) scale(1);opacity:1}
+}
+
+/* RANDOM anim */
+button.random-animate{
+    animation:shake .4s;
+}
+
+@keyframes shake{
+    0%{transform:rotate(0)}
+    25%{transform:rotate(-6deg)}
+    50%{transform:rotate(6deg)}
+    75%{transform:rotate(-4deg)}
+    100%{transform:rotate(0)}
 }
 </style>
 </head>
@@ -160,7 +155,8 @@ input{width:230px;}
 <h1>Şiir Sesleri</h1>
 
 <div class="controls">
-    <button onclick="randomSiir()">🎲 Rastgele</button>
+    <button id="randomBtn" onclick="randomSiir()">🎲 Rastgele</button>
+    <input id="search" placeholder="Şiir ara..." onkeyup="filterPoems()">
     <button onclick="toggleTheme()">🌙</button>
 </div>
 
@@ -177,7 +173,6 @@ const siirler=[
 
 const list=document.getElementById("list");
 
-/* render */
 function render(){
     list.innerHTML="";
     siirler.forEach((s,i)=>{
@@ -189,13 +184,11 @@ function render(){
     });
 }
 
-/* close */
 function closeAll(){
     document.querySelectorAll(".poem-card")
     .forEach(c=>c.classList.remove("open","active"));
 }
 
-/* toggle */
 function toggleCard(i){
     let card=document.getElementById("card-"+i);
     let open=card.classList.contains("active");
@@ -209,14 +202,59 @@ function toggleCard(i){
 
 /* random */
 function randomSiir(){
+    let btn=document.getElementById("randomBtn");
+    btn.classList.add("random-animate");
+    setTimeout(()=>btn.classList.remove("random-animate"),400);
+
     let i=Math.floor(Math.random()*siirler.length);
     toggleCard(i);
+}
+
+/* search */
+function filterPoems(){
+    let val=document.getElementById("search").value.toLowerCase();
+    document.querySelectorAll(".poem-card").forEach(c=>{
+        let t=c.querySelector(".poem-name").innerText.toLowerCase();
+        c.style.display=t.includes(val)?"block":"none";
+    });
 }
 
 /* theme */
 function toggleTheme(){
     document.body.classList.toggle("dark");
 }
+
+/* particles (basit) */
+const canvas=document.getElementById("particles");
+const ctx=canvas.getContext("2d");
+let w,h;
+
+function resize(){
+    w=canvas.width=innerWidth;
+    h=canvas.height=innerHeight;
+}
+resize();
+addEventListener("resize",resize);
+
+let p=[];
+for(let i=0;i<60;i++){
+    p.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*2});
+}
+
+function anim(){
+    ctx.clearRect(0,0,w,h);
+    for(let o of p){
+        o.y+=0.3;
+        if(o.y>h)o.y=0;
+
+        ctx.beginPath();
+        ctx.arc(o.x,o.y,o.r,0,Math.PI*2);
+        ctx.fillStyle="rgba(255,255,255,.6)";
+        ctx.fill();
+    }
+    requestAnimationFrame(anim);
+}
+anim();
 
 render();
 </script>
