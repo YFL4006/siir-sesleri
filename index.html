@@ -33,7 +33,6 @@ body{
     transition:.4s;
 }
 
-/* overlay */
 .overlay{
     position:fixed;
     inset:0;
@@ -50,14 +49,12 @@ body.modal-open .overlay{
     pointer-events:auto;
 }
 
-/* particles */
 #particles{
     position:fixed;
     inset:0;
     z-index:-1;
 }
 
-/* title */
 h1{font-size:2.3em;margin-bottom:10px;}
 
 .quote{
@@ -68,7 +65,6 @@ h1{font-size:2.3em;margin-bottom:10px;}
     font-size:18px;
 }
 
-/* controls */
 .controls{
     margin-bottom:28px;
     display:flex;
@@ -107,7 +103,6 @@ button.random-animate{animation:shake .4s;}
 
 input{width:230px;}
 
-/* grid */
 .poem-container{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
@@ -116,7 +111,6 @@ input{width:230px;}
     margin:auto;
 }
 
-/* card */
 .poem-card{
     background:var(--card);
     border-radius:18px;
@@ -129,7 +123,6 @@ input{width:230px;}
 
 .poem-card:hover{transform:translateY(-5px);}
 
-/* flash */
 .poem-card.flash{
     box-shadow:0 0 25px rgba(255,150,0,.6);
     transform:scale(1.05);
@@ -153,7 +146,6 @@ input{width:230px;}
     transform:rotate(180deg) scale(1.2);
 }
 
-/* modal */
 .poem-card.active{
     position:fixed;
     top:50%;
@@ -164,7 +156,6 @@ input{width:230px;}
     box-shadow:0 30px 70px rgba(0,0,0,.35);
 }
 
-/* text */
 .poem-text{
     max-height:0;
     opacity:0;
@@ -180,7 +171,6 @@ input{width:230px;}
     padding-top:14px;
 }
 
-/* mobile */
 @media(max-width:600px){
     body{padding:22px 12px;}
     h1{font-size:1.9em;}
@@ -205,8 +195,7 @@ Değerle düşün, Bilimle üret, Doğayla yaşa!
 <div class="controls">
     <button id="randomBtn" onclick="randomSiir()">🎲 Rastgele</button>
     <input id="search" placeholder="Şiir ara..." onkeyup="filterPoems()">
-    <button onclick="tema('light')">☀️</button>
-    <button onclick="tema('dark')">🌙</button>
+    <button id="themeBtn" onclick="toggleTheme()">🌙</button>
 </div>
 
 <div class="poem-container" id="list"></div>
@@ -226,6 +215,7 @@ Giden kalpte sızı yakar.`}
 ];
 
 const list=document.getElementById("list");
+const themeBtn=document.getElementById("themeBtn");
 
 function render(){
     list.innerHTML="";
@@ -258,6 +248,7 @@ function toggleCard(i){
     }
 }
 
+/* 🎲 RANDOM */
 function randomSiir(){
     let btn=document.getElementById("randomBtn");
     btn.classList.add("random-animate");
@@ -287,6 +278,7 @@ function randomSiir(){
     },100);
 }
 
+/* 🔍 SEARCH */
 function filterPoems(){
     let val=document.getElementById("search").value.toLowerCase();
     document.querySelectorAll(".poem-card").forEach(card=>{
@@ -295,10 +287,23 @@ function filterPoems(){
     });
 }
 
-function tema(t){
-    document.body.classList.remove("dark");
-    if(t==="dark") document.body.classList.add("dark");
+/* 🌙 TEK BUTON THEME */
+function toggleTheme(){
+    document.body.classList.toggle("dark");
+
+    if(document.body.classList.contains("dark")){
+        themeBtn.innerText="☀️";
+    } else {
+        themeBtn.innerText="🌙";
+    }
 }
+
+/* sayfa açılınca ikon doğru gelsin */
+window.onload=()=>{
+    if(document.body.classList.contains("dark")){
+        themeBtn.innerText="☀️";
+    }
+};
 
 render();
 
