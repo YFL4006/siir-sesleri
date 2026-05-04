@@ -103,6 +103,24 @@ button:hover{
     transform:translateY(-3px);
 }
 
+/* 🔥 TIK ANİMASYONU */
+button:active{
+    transform:scale(0.9);
+}
+
+/* 🎲 SHAKE ANİMASYONU */
+button.random-animate{
+    animation:shake .4s;
+}
+
+@keyframes shake{
+    0%{transform:rotate(0)}
+    25%{transform:rotate(-6deg)}
+    50%{transform:rotate(6deg)}
+    75%{transform:rotate(-4deg)}
+    100%{transform:rotate(0)}
+}
+
 input{
     width:230px;
 }
@@ -142,14 +160,21 @@ input{
     margin-bottom:8px;
 }
 
+/* ok */
 .poem-read{
-    font-size:15px;
-    opacity:.75;
-    margin-bottom:5px;
+    font-size:26px;
+    opacity:.9;
+    transition:.3s;
+    display:inline-block;
+}
+
+.poem-header:hover .poem-read{
+    transform:translateY(3px) scale(1.2);
+    opacity:1;
 }
 
 .poem-card.open .poem-read{
-    transform:rotate(180deg);
+    transform:rotate(180deg) scale(1.2);
 }
 
 /* active modal */
@@ -230,7 +255,7 @@ Değerle düşün, Bilimle üret, Doğayla yaşa!
 </div>
 
 <div class="controls">
-    <button onclick="randomSiir()">🎲 Rastgele</button>
+    <button id="randomBtn" onclick="randomSiir()">🎲 Rastgele</button>
     <input id="search" placeholder="Şiir ara..." onkeyup="filterPoems()">
     <button onclick="tema('light')">☀️</button>
     <button onclick="tema('dark')">🌙</button>
@@ -283,7 +308,7 @@ function render(){
             
             <div class="poem-header" onclick="toggleCard(${i})">
                 <div class="poem-name">${s.baslik}</div>
-                <div class="poem-read">Oku ⌄</div>
+                <div class="poem-read">⌄</div>
             </div>
 
             <div class="poem-text">${s.metin}</div>
@@ -313,7 +338,6 @@ function closeCard(){
 }
 
 function toggleCard(i){
-
     let card = document.getElementById("card-"+i);
     let alreadyOpen = card.classList.contains("active");
 
@@ -326,6 +350,15 @@ function toggleCard(i){
 }
 
 function randomSiir(){
+    let btn = document.getElementById("randomBtn");
+
+    // animasyonu tetikle
+    btn.classList.add("random-animate");
+
+    setTimeout(()=>{
+        btn.classList.remove("random-animate");
+    },400);
+
     let i = Math.floor(Math.random()*siirler.length);
     toggleCard(i);
 }
