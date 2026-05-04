@@ -20,8 +20,7 @@ body.dark{
     --card:#2a2a2a;
 }
 
-*{margin:0;padding:0;box-sizing:border-box;}
-
+/* 🔥 SMOOTH THEME GEÇİŞ */
 body{
     font-family:Georgia, serif;
     background:linear-gradient(135deg,var(--bg1),var(--bg2));
@@ -29,7 +28,27 @@ body{
     min-height:100vh;
     padding:35px 15px;
     text-align:center;
-    transition:.4s;
+    overflow-x:hidden;
+    transition:background .5s, color .4s;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+/* overlay */
+.overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.25);
+    backdrop-filter:blur(7px);
+    opacity:0;
+    pointer-events:none;
+    transition:.3s;
+    z-index:500;
+}
+
+body.modal-open .overlay{
+    opacity:1;
+    pointer-events:auto;
 }
 
 /* particles */
@@ -37,6 +56,17 @@ body{
     position:fixed;
     inset:0;
     z-index:-1;
+}
+
+/* title */
+h1{font-size:2.3em;margin-bottom:10px;}
+
+.quote{
+    font-style:italic;
+    margin-bottom:22px;
+    opacity:.85;
+    line-height:1.7;
+    font-size:18px;
 }
 
 /* controls */
@@ -58,11 +88,22 @@ button,input{
 button{
     cursor:pointer;
     background:var(--card);
-    transition:.2s;
+    color:var(--text);
+    transition:.25s;
 }
 
 button:hover{transform:translateY(-3px);}
-button:active{transform:scale(0.92);}
+button:active{transform:scale(0.9);}
+
+/* shake */
+button.random-animate{animation:shake .4s;}
+@keyframes shake{
+    0%{transform:rotate(0)}
+    25%{transform:rotate(-6deg)}
+    50%{transform:rotate(6deg)}
+    75%{transform:rotate(-4deg)}
+    100%{transform:rotate(0)}
+}
 
 input{width:230px;}
 
@@ -81,122 +122,135 @@ input{width:230px;}
     border-radius:18px;
     padding:20px;
     box-shadow:0 10px 30px rgba(0,0,0,.08);
-    cursor:pointer;
-    transition:.25s;
+    transition:.3s;
+    position:relative;
 }
 
-.poem-card:hover{
-    transform:translateY(-5px);
-}
+.poem-card:hover{transform:translateY(-5px);}
+
+.poem-header{cursor:pointer;text-align:center;}
 
 .poem-name{
-    font-size:22px;
+    font-size:24px;
     font-weight:bold;
+    margin-bottom:8px;
 }
 
-/* 🔥 GERÇEK SMOOTH FADE FIX */
+.poem-read{
+    font-size:26px;
+    opacity:.9;
+    transition:.3s;
+}
+
+/* 🔥 YENİ SMOOTH FADE */
 .poem-text{
-    margin-top:10px;
+    max-height:0;
     opacity:0;
-    transform:translateY(-12px) scale(.96);
-    filter:blur(6px);
-
-    transition:
-        opacity .35s ease,
-        transform .45s cubic-bezier(.2,1.2,.2,1),
-        filter .45s ease;
-
-    pointer-events:none;
+    overflow:hidden;
+    transform:translateY(-15px) scale(.98);
+    transition:all .45s cubic-bezier(.22,1,.36,1);
+    line-height:1.9;
+    white-space:pre-line;
 }
 
-/* OPEN */
 .poem-card.open .poem-text{
+    max-height:500px;
     opacity:1;
     transform:translateY(0) scale(1);
-    filter:blur(0);
-    pointer-events:auto;
+    padding-top:14px;
 }
 
-/* active modal */
+/* ok animasyonu */
+.poem-card.open .poem-read{
+    transform:rotate(180deg) scale(1.2);
+}
+
+/* modal */
 .poem-card.active{
     position:fixed;
     top:50%;
     left:50%;
-    transform:translate(-50%,-50%);
+    transform:translate(-50%,-50%) scale(.95);
     width:min(92%,520px);
     z-index:999;
-    animation:pop .4s cubic-bezier(.2,1.3,.2,1);
+    box-shadow:0 30px 70px rgba(0,0,0,.35);
+    animation:popup .35s ease forwards;
 }
 
-@keyframes pop{
-    0%{transform:translate(-50%,-50%) scale(.85);opacity:0}
-    100%{transform:translate(-50%,-50%) scale(1);opacity:1}
+@keyframes popup{
+    to{
+        transform:translate(-50%,-50%) scale(1);
+    }
 }
 
-/* RANDOM anim */
-button.random-animate{
-    animation:shake .4s;
-}
-
-@keyframes shake{
-    0%{transform:rotate(0)}
-    25%{transform:rotate(-6deg)}
-    50%{transform:rotate(6deg)}
-    75%{transform:rotate(-4deg)}
-    100%{transform:rotate(0)}
+@media(max-width:600px){
+    .poem-container{grid-template-columns:1fr;}
+    input,button{width:100%;}
 }
 </style>
 </head>
 
 <body>
 
+<div class="overlay" onclick="closeCard()"></div>
 <canvas id="particles"></canvas>
 
 <h1>Şiir Sesleri</h1>
 
+<div class="quote">
+Değerle düşün, Bilimle üret, Doğayla yaşa!
+</div>
+
 <div class="controls">
     <button id="randomBtn" onclick="randomSiir()">🎲 Rastgele</button>
     <input id="search" placeholder="Şiir ara..." onkeyup="filterPoems()">
-    <button onclick="toggleTheme()">🌙</button>
+    <button id="themeBtn" onclick="toggleTheme()">🌙</button>
 </div>
 
 <div class="poem-container" id="list"></div>
 
 <script>
 const siirler=[
-{baslik:"Şiir 1",metin:"Kalbimde sessiz bir rüzgar"},
-{baslik:"Şiir 2",metin:"Yollar uzun, gözler yorgun"},
-{baslik:"Şiir 3",metin:"Deniz kadar derin sustum"},
-{baslik:"Şiir 4",metin:"Bir yıldız kaydı geceden"},
-{baslik:"Şiir 5",metin:"Zaman geçer iz bırakır"}
+{baslik:"Şiir 1",metin:`Kalbimde sessiz bir rüzgar,\nGeceye düşer hatıralar.`},
+{baslik:"Şiir 2",metin:`Yollar uzun, gözler yorgun,\nAşk yine bana vurgun.`},
+{baslik:"Şiir 3",metin:`Deniz kadar derin sustum,\nAdını içimde duydum.`},
+{baslik:"Şiir 4",metin:`Bir yıldız kaydı geceden,\nBen geçemedim senden.`},
+{baslik:"Şiir 5",metin:`Zaman geçer iz bırakır,\nGiden kalpte sızı yakar.`}
 ];
 
 const list=document.getElementById("list");
+const themeBtn=document.getElementById("themeBtn");
 
+/* render */
 function render(){
     list.innerHTML="";
     siirler.forEach((s,i)=>{
         list.innerHTML+=`
-        <div class="poem-card" id="card-${i}" onclick="toggleCard(${i})">
-            <div class="poem-name">${s.baslik}</div>
+        <div class="poem-card" data-title="${s.baslik}" id="card-${i}">
+            <div class="poem-header" onclick="toggleCard(${i})">
+                <div class="poem-name">${s.baslik}</div>
+                <div class="poem-read">⌄</div>
+            </div>
             <div class="poem-text">${s.metin}</div>
         </div>`;
     });
 }
 
-function closeAll(){
-    document.querySelectorAll(".poem-card")
-    .forEach(c=>c.classList.remove("open","active"));
+/* card */
+function closeCard(){
+    document.querySelectorAll(".poem-card").forEach(c=>{
+        c.classList.remove("open","active");
+    });
+    document.body.classList.remove("modal-open");
 }
 
 function toggleCard(i){
     let card=document.getElementById("card-"+i);
     let open=card.classList.contains("active");
-
-    closeAll();
-
+    closeCard();
     if(!open){
         card.classList.add("open","active");
+        document.body.classList.add("modal-open");
     }
 }
 
@@ -204,6 +258,7 @@ function toggleCard(i){
 function randomSiir(){
     let btn=document.getElementById("randomBtn");
     btn.classList.add("random-animate");
+
     setTimeout(()=>btn.classList.remove("random-animate"),400);
 
     let i=Math.floor(Math.random()*siirler.length);
@@ -213,21 +268,44 @@ function randomSiir(){
 /* search */
 function filterPoems(){
     let val=document.getElementById("search").value.toLowerCase();
-    document.querySelectorAll(".poem-card").forEach(c=>{
-        let t=c.querySelector(".poem-name").innerText.toLowerCase();
-        c.style.display=t.includes(val)?"block":"none";
+    document.querySelectorAll(".poem-card").forEach(card=>{
+        let t=card.dataset.title.toLowerCase();
+        card.style.display=t.includes(val)?"block":"none";
     });
 }
 
-/* theme */
+/* 🌙 THEME */
 function toggleTheme(){
     document.body.classList.toggle("dark");
+    localStorage.setItem("theme",document.body.classList.contains("dark")?"dark":"light");
+    updateThemeIcon();
 }
 
-/* particles (basit) */
+function updateThemeIcon(){
+    themeBtn.innerText=document.body.classList.contains("dark")?"☀️":"🌙";
+}
+
+/* ilk açılış */
+(function(){
+    let saved=localStorage.getItem("theme");
+
+    if(saved){
+        if(saved==="dark") document.body.classList.add("dark");
+    }else{
+        if(window.matchMedia('(prefers-color-scheme: dark)').matches){
+            document.body.classList.add("dark");
+        }
+    }
+
+    updateThemeIcon();
+})();
+
+render();
+
+/* particles */
 const canvas=document.getElementById("particles");
 const ctx=canvas.getContext("2d");
-let w,h;
+let w,h,particles=[];
 
 function resize(){
     w=canvas.width=innerWidth;
@@ -236,27 +314,34 @@ function resize(){
 resize();
 addEventListener("resize",resize);
 
-let p=[];
-for(let i=0;i<60;i++){
-    p.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*2});
+for(let i=0;i<80;i++){
+    particles.push({
+        x:Math.random()*w,
+        y:Math.random()*h,
+        r:Math.random()*2,
+        dx:(Math.random()-.5)*0.5,
+        dy:(Math.random()-.5)*0.5
+    });
 }
 
-function anim(){
+function animate(){
     ctx.clearRect(0,0,w,h);
-    for(let o of p){
-        o.y+=0.3;
-        if(o.y>h)o.y=0;
+    for(let p of particles){
+        p.x+=p.dx;
+        p.y+=p.dy;
+        if(p.x<0||p.x>w)p.dx*=-1;
+        if(p.y<0||p.y>h)p.dy*=-1;
 
         ctx.beginPath();
-        ctx.arc(o.x,o.y,o.r,0,Math.PI*2);
-        ctx.fillStyle="rgba(255,255,255,.6)";
+        ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.fillStyle=document.body.classList.contains("dark")
+        ? "rgba(255,255,255,.7)"
+        : "rgba(255,255,255,.9)";
         ctx.fill();
     }
-    requestAnimationFrame(anim);
+    requestAnimationFrame(animate);
 }
-anim();
-
-render();
+animate();
 </script>
 
 </body>
