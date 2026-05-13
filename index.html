@@ -500,7 +500,7 @@ function render(){
             <div class="poem-text">
                 ${s.metin}
                 <div class="audio-player">
-                    <audio controls style="width:100%; margin-top:12px;">
+                    <audio id="audio-${i}" controls style="width:100%; margin-top:12px;">
                         <source src="${s.ses}" type="audio/mpeg">
                     </audio>
                 </div>
@@ -510,16 +510,24 @@ function render(){
 }
 
 function toggleCard(i){
-    closeCard();
+    closeCard(); // Önce diğerlerini kapat
     document.getElementById(`card-${i}`).classList.add("open", "active");
     document.body.classList.add("modal-open");
 }
 
 function closeCard(){
+    // Tüm kartları kapat
     document.querySelectorAll(".poem-card").forEach(c => {
         c.classList.remove("open", "active", "highlight");
     });
+    
     document.body.classList.remove("modal-open");
+
+    // ★★★ EN ÖNEMLİ DÜZELTME: Tüm sesleri durdur ★★★
+    document.querySelectorAll("audio").forEach(audio => {
+        audio.pause();
+        audio.currentTime = 0;
+    });
 }
 
 function randomSiir(){
