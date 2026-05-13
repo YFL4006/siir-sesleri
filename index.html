@@ -13,14 +13,12 @@
     --card:#fff8f0;
     --accent:#ff8c00;
 }
-
 body.dark{
     --bg1:#121212;
     --bg2:#1f1f1f;
     --text:#f5f5f5;
     --card:#2a2a2a;
 }
-
 body{
     font-family:Georgia, serif;
     background:linear-gradient(135deg,var(--bg1),var(--bg2));
@@ -31,92 +29,36 @@ body{
     overflow-x:hidden;
     transition:.5s;
 }
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
+*{ margin:0; padding:0; box-sizing:border-box; }
 
 .overlay{
-    position:fixed;
-    inset:0;
+    position:fixed; inset:0;
     background:rgba(0,0,0,.25);
     backdrop-filter:blur(7px);
-    opacity:0;
-    pointer-events:none;
-    transition:.3s;
-    z-index:500;
+    opacity:0; pointer-events:none;
+    transition:.3s; z-index:500;
 }
-
 body.modal-open .overlay{
-    opacity:1;
-    pointer-events:auto;
+    opacity:1; pointer-events:auto;
 }
+#particles{ position:fixed; inset:0; z-index:-1; }
 
-#particles{
-    position:fixed;
-    inset:0;
-    z-index:-1;
-}
-
-h1{
-    font-size:2.5em;
-    margin-bottom:10px;
-}
-
-.quote{
-    font-style:italic;
-    margin-bottom:25px;
-    opacity:.85;
-    font-size:18px;
-}
+h1{ font-size:2.5em; margin-bottom:10px; }
+.quote{ font-style:italic; margin-bottom:25px; opacity:.85; font-size:18px; }
 
 .controls{
     margin-bottom:30px;
-    display:flex;
-    justify-content:center;
-    gap:10px;
-    flex-wrap:wrap;
+    display:flex; justify-content:center; gap:10px; flex-wrap:wrap;
 }
-
 button,input{
-    padding:10px 14px;
-    border:none;
-    border-radius:12px;
-    font-size:15px;
+    padding:10px 14px; border:none; border-radius:12px; font-size:15px;
 }
-
 button{
-    cursor:pointer;
-    background:var(--card);
-    color:var(--text);
+    cursor:pointer; background:var(--card); color:var(--text);
     transition:.25s;
 }
-
-button:hover{
-    transform:translateY(-3px);
-}
-
-button:active{
-    transform:scale(0.9);
-}
-
-button.random-animate{
-    animation:shake .4s;
-}
-
-@keyframes shake{
-    0%{transform:rotate(0)}
-    25%{transform:rotate(-6deg)}
-    50%{transform:rotate(6deg)}
-    75%{transform:rotate(-4deg)}
-    100%{transform:rotate(0)}
-}
-
-input{
-    width:230px;
-}
+button:hover{ transform:translateY(-3px); }
+button:active{ transform:scale(0.9); }
 
 .poem-container{
     display:grid;
@@ -125,7 +67,6 @@ input{
     max-width:1100px;
     margin:auto;
 }
-
 .poem-card{
     background:var(--card);
     border-radius:18px;
@@ -133,20 +74,13 @@ input{
     box-shadow:0 10px 30px rgba(0,0,0,.08);
     transition:.3s;
 }
-
-.poem-card:hover{
-    transform:translateY(-5px);
-}
-
+.poem-card:hover{ transform:translateY(-5px); }
 .poem-card.highlight{
     transform:scale(1.05);
     box-shadow:0 0 25px rgba(255,140,0,.5);
 }
 
-.poem-header{
-    cursor:pointer;
-}
-
+.poem-header{ cursor:pointer; }
 .poem-name{
     font-size:24px;
     font-weight:bold;
@@ -161,7 +95,6 @@ input{
     white-space:pre-line;
     line-height:1.7;
 }
-
 .poem-card.open .poem-text{
     max-height:2000px;
     overflow-y:auto;
@@ -170,14 +103,9 @@ input{
     padding-bottom:10px;
 }
 
-.audio-player{
-    margin-top:12px;
-}
-
 .poem-card.active{
     position:fixed;
-    top:50%;
-    left:50%;
+    top:50%; left:50%;
     transform:translate(-50%,-50%);
     width:min(92%,520px);
     z-index:999;
@@ -185,7 +113,6 @@ input{
     max-height:90vh;
     overflow-y:auto;
 }
-
 @keyframes popup{
     from{ transform:translate(-50%,-50%) scale(.8); }
     to{ transform:translate(-50%,-50%) scale(1); }
@@ -199,10 +126,7 @@ input{
 <canvas id="particles"></canvas>
 
 <h1>Şiir Sesleri</h1>
-
-<div class="quote">
-Değerle düşün, Bilimle üret, Doğayla yaşa!
-</div>
+<div class="quote">Değerle düşün, Bilimle üret, Doğayla yaşa!</div>
 
 <div class="controls">
     <button id="randomBtn" onclick="randomSiir()">🎲 Rastgele</button>
@@ -213,8 +137,7 @@ Değerle düşün, Bilimle üret, Doğayla yaşa!
 <div class="poem-container" id="list"></div>
 
 <script>
-
-const siirler = [
+const siirler = [ /* aynı 11 şiir */ 
 {
 baslik:"Gel Gör Beni Aşk Neyledi",
 metin:`Ben yürürüm yana yana
@@ -510,30 +433,29 @@ function render(){
 }
 
 function toggleCard(i){
-    closeCard(); // Önce diğerlerini kapat
-    document.getElementById(`card-${i}`).classList.add("open", "active");
+    closeCard();
+    document.getElementById(`card-${i}`).classList.add("open","active");
     document.body.classList.add("modal-open");
 }
 
 function closeCard(){
-    // Tüm kartları kapat
     document.querySelectorAll(".poem-card").forEach(c => {
-        c.classList.remove("open", "active", "highlight");
+        c.classList.remove("open","active","highlight");
     });
-    
     document.body.classList.remove("modal-open");
 
-    // ★★★ EN ÖNEMLİ DÜZELTME: Tüm sesleri durdur ★★★
+    // Tüm sesleri durdur (daha güvenli yöntem)
     document.querySelectorAll("audio").forEach(audio => {
-        audio.pause();
-        audio.currentTime = 0;
+        if (!audio.paused) {
+            audio.pause();
+            audio.currentTime = 0;
+        }
     });
 }
 
 function randomSiir(){
     const btn = document.getElementById("randomBtn");
     btn.classList.add("random-animate");
-
     const cards = document.querySelectorAll(".poem-card");
     let index = 0, rounds = 0;
 
@@ -544,8 +466,7 @@ function randomSiir(){
         rounds++;
         if(rounds > 18){
             clearInterval(interval);
-            const final = Math.floor(Math.random() * cards.length);
-            setTimeout(() => toggleCard(final), 250);
+            toggleCard(Math.floor(Math.random() * cards.length));
         }
     }, 90);
 
@@ -566,28 +487,21 @@ function toggleTheme(){
     document.getElementById("themeBtn").innerText = document.body.classList.contains("dark") ? "☀️" : "🌙";
 }
 
-// Tema yükleme
-if(localStorage.getItem("theme") === "dark"){
-    document.body.classList.add("dark");
-}
+// Tema ve render
+if(localStorage.getItem("theme") === "dark") document.body.classList.add("dark");
 document.getElementById("themeBtn").innerText = document.body.classList.contains("dark") ? "☀️" : "🌙";
 
 render();
 
-// Particles
+// Particles (kısaltıldı)
 const canvas = document.getElementById("particles");
 const ctx = canvas.getContext("2d");
-let w, h, p = [];
-
-function resize(){
-    w = canvas.width = innerWidth;
-    h = canvas.height = innerHeight;
-}
-resize();
-addEventListener("resize", resize);
+let w = canvas.width = innerWidth;
+let h = canvas.height = innerHeight;
+let particles = [];
 
 for(let i = 0; i < 60; i++){
-    p.push({
+    particles.push({
         x: Math.random()*w,
         y: Math.random()*h,
         r: Math.random()*2,
@@ -598,20 +512,23 @@ for(let i = 0; i < 60; i++){
 
 function animate(){
     ctx.clearRect(0,0,w,h);
-    for(let particle of p){
-        particle.x += particle.dx;
-        particle.y += particle.dy;
-        if(particle.x < 0 || particle.x > w) particle.dx *= -1;
-        if(particle.y < 0 || particle.y > h) particle.dy *= -1;
-
+    for(let p of particles){
+        p.x += p.dx; p.y += p.dy;
+        if(p.x < 0 || p.x > w) p.dx *= -1;
+        if(p.y < 0 || p.y > h) p.dy *= -1;
         ctx.beginPath();
-        ctx.arc(particle.x, particle.y, particle.r, 0, Math.PI*2);
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
         ctx.fillStyle = "rgba(255,255,255,.8)";
         ctx.fill();
     }
     requestAnimationFrame(animate);
 }
 animate();
+
+window.addEventListener("resize", () => {
+    w = canvas.width = innerWidth;
+    h = canvas.height = innerHeight;
+});
 </script>
 </body>
 </html>
