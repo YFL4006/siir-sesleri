@@ -1,689 +1,777 @@
-<!DOCTYPE html>  <html lang="tr">  
-<head>  
-<meta charset="UTF-8">  
-<meta name="viewport" content="width=device-width, initial-scale=1.0">  
-<title>Şiir Sesleri</title>  <style>  
-:root{  
-    --bg1:#fdf6e3;  
-    --bg2:#f5e6ca;  
-    --text:#3b2f2f;  
-    --card:#fff8f0;  
-    --accent:#ff8c00;  
-}  
-  
-body.dark{  
-    --bg1:#121212;  
-    --bg2:#1f1f1f;  
-    --text:#f5f5f5;  
-    --card:#2a2a2a;  
-}  
-  
-body{  
-    font-family:Georgia, serif;  
-    background:linear-gradient(135deg,var(--bg1),var(--bg2));  
-    color:var(--text);  
-    min-height:100vh;  
-    padding:35px 15px;  
-    text-align:center;  
-    overflow-x:hidden;  
-    transition:.5s;  
-}  
-  
-*{  
-    margin:0;  
-    padding:0;  
-    box-sizing:border-box;  
-}  
-  
-.overlay{  
-    position:fixed;  
-    inset:0;  
-    background:rgba(0,0,0,.25);  
-    backdrop-filter:blur(7px);  
-    opacity:0;  
-    pointer-events:none;  
-    transition:.3s;  
-    z-index:500;  
-}  
-  
-body.modal-open .overlay{  
-    opacity:1;  
-    pointer-events:auto;  
-}  
-  
-#particles{  
-    position:fixed;  
-    inset:0;  
-    z-index:-1;  
-}  
-  
-h1{  
-    font-size:2.5em;  
-    margin-bottom:10px;  
-}  
-  
-.quote{  
-    font-style:italic;  
-    margin-bottom:25px;  
-    opacity:.85;  
-    font-size:18px;  
-}  
-  
-.controls{  
-    margin-bottom:30px;  
-    display:flex;  
-    justify-content:center;  
-    gap:10px;  
-    flex-wrap:wrap;  
-}  
-  
-button,input{  
-    padding:10px 14px;  
-    border:none;  
-    border-radius:12px;  
-    font-size:15px;  
-}  
-  
-button{  
-    cursor:pointer;  
-    background:var(--card);  
-    color:var(--text);  
-    transition:.25s;  
-}  
-  
-button:hover{  
-    transform:translateY(-3px);  
-}  
-  
-button:active{  
-    transform:scale(0.9);  
-}  
-  
-button.random-animate{  
-    animation:shake .4s;  
-}  
-  
-@keyframes shake{  
-    0%{transform:rotate(0)}  
-    25%{transform:rotate(-6deg)}  
-    50%{transform:rotate(6deg)}  
-    75%{transform:rotate(-4deg)}  
-    100%{transform:rotate(0)}  
-}  
-  
-input{  
-    width:230px;  
-}  
-  
-.poem-container{  
-    display:grid;  
-    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));  
-    gap:18px;  
-    max-width:1100px;  
-    margin:auto;  
-}  
-  
-.poem-card{  
-    background:var(--card);  
-    border-radius:18px;  
-    padding:20px;  
-    box-shadow:0 10px 30px rgba(0,0,0,.08);  
-    transition:.3s;  
-}  
-  
-.poem-card:hover{  
-    transform:translateY(-5px);  
-}  
-  
-.poem-card.highlight{  
-    transform:scale(1.05);  
-    box-shadow:0 0 25px rgba(255,140,0,.5);  
-}  
-  
-.poem-header{  
-    cursor:pointer;  
-}  
-  
-.poem-name{  
-    font-size:24px;  
-    font-weight:bold;  
-    margin-bottom:8px;  
-}  
-  
-.poem-text{  
-    max-height:0;  
-    opacity:0;  
-    overflow:hidden;  
-    transition:.4s;  
-    white-space:pre-line;  
-    line-height:1.7;  
-}  
-  
-.poem-card.open .poem-text{  
-    max-height:500px;  
-    opacity:1;  
-    padding-top:10px;  
-}  
-  
-/* MODAL */  
-.poem-card.active{  
-    position:fixed;  
-    top:50%;  
-    left:50%;  
-    transform:translate(-50%,-50%);  
-    width:min(92%,520px);  
-    z-index:999;  
-    animation:popup .3s ease;  
-}  
-  
-@keyframes popup{  
-    from{  
-        transform:translate(-50%,-50%) scale(.8);  
-    }  
-    to{  
-        transform:translate(-50%,-50%) scale(1);  
-    }  
-}  
-  
-/* PLAYER */  
-.audio-player{  
-    margin-top:14px;  
-    padding:10px;  
-    border-radius:12px;  
-    transition:.3s;  
-}  
-  
-.audio-player.playing{  
-    background:rgba(255,140,0,0.08);  
-    box-shadow:0 0 18px rgba(255,140,0,0.4);  
-}  
-  
-.audio-controls{  
-    display:flex;  
-    align-items:center;  
-    gap:8px;  
-}  
-  
-.play-btn{  
-    background:var(--accent);  
-    color:white;  
-    border-radius:50%;  
-    width:40px;  
-    height:40px;  
-    font-size:16px;  
-    cursor:pointer;  
-}  
-  
-.progress{  
-    width:100%;  
-    accent-color:var(--accent);  
-}  
-</style>  </head>  <body>  <div class="overlay" onclick="closeCard()"></div>  
-<canvas id="particles"></canvas>  <h1>Şiir Sesleri</h1>  <div class="quote">  
-Değerle düşün, Bilimle üret, Doğayla yaşa!  
-</div>  <div class="controls">  
-    <button id="randomBtn" onclick="randomSiir()">🎲 Rastgele</button>  <input  
-    id="search"8  
-    placeholder="Şiir ara..."  
-    onkeyup="filterPoems()"  
->  
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Şiir Sesleri</title>
+
+<style>
+:root{
+    --bg1:#fdf6e3;
+    --bg2:#f5e6ca;
+    --text:#3b2f2f;
+    --card:#fff8f0;
+    --accent:#ff8c00;
+}
+
+body.dark{
+    --bg1:#121212;
+    --bg2:#1f1f1f;
+    --text:#f5f5f5;
+    --card:#2a2a2a;
+}
+
+body{
+    font-family:Georgia, serif;
+    background:linear-gradient(135deg,var(--bg1),var(--bg2));
+    color:var(--text);
+    min-height:100vh;
+    padding:35px 15px;
+    text-align:center;
+    overflow-x:hidden;
+    transition:.5s;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+.overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.25);
+    backdrop-filter:blur(7px);
+    opacity:0;
+    pointer-events:none;
+    transition:.3s;
+    z-index:500;
+}
+
+body.modal-open .overlay{
+    opacity:1;
+    pointer-events:auto;
+}
+
+#particles{
+    position:fixed;
+    inset:0;
+    z-index:-1;
+}
+
+h1{
+    font-size:2.5em;
+    margin-bottom:10px;
+}
+
+.quote{
+    font-style:italic;
+    margin-bottom:25px;
+    opacity:.85;
+    font-size:18px;
+}
+
+.controls{
+    margin-bottom:30px;
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+button,input{
+    padding:10px 14px;
+    border:none;
+    border-radius:12px;
+    font-size:15px;
+}
+
+button{
+    cursor:pointer;
+    background:var(--card);
+    color:var(--text);
+    transition:.25s;
+}
+
+button:hover{
+    transform:translateY(-3px);
+}
+
+button:active{
+    transform:scale(0.9);
+}
+
+button.random-animate{
+    animation:shake .4s;
+}
+
+@keyframes shake{
+    0%{transform:rotate(0)}
+    25%{transform:rotate(-6deg)}
+    50%{transform:rotate(6deg)}
+    75%{transform:rotate(-4deg)}
+    100%{transform:rotate(0)}
+}
+
+input{
+    width:230px;
+}
+
+.poem-container{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:18px;
+    max-width:1100px;
+    margin:auto;
+}
+
+.poem-card{
+    background:var(--card);
+    border-radius:18px;
+    padding:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+    transition:.3s;
+}
+
+.poem-card:hover{
+    transform:translateY(-5px);
+}
+
+.poem-card.highlight{
+    transform:scale(1.05);
+    box-shadow:0 0 25px rgba(255,140,0,.5);
+}
+
+.poem-header{
+    cursor:pointer;
+}
+
+.poem-name{
+    font-size:24px;
+    font-weight:bold;
+    margin-bottom:8px;
+}
+
+.poem-text{
+    max-height:0;
+    opacity:0;
+    overflow:hidden;
+    transition:.4s;
+    white-space:pre-line;
+    line-height:1.7;
+}
+
+.poem-card.open .poem-text{
+    max-height:900px;
+    opacity:1;
+    padding-top:10px;
+}
+
+.poem-card.active{
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    width:min(92%,520px);
+    z-index:999;
+    animation:popup .3s ease;
+    max-height:90vh;
+    overflow-y:auto;
+}
+
+@keyframes popup{
+    from{
+        transform:translate(-50%,-50%) scale(.8);
+    }
+    to{
+        transform:translate(-50%,-50%) scale(1);
+    }
+}
+
+.audio-player{
+    margin-top:14px;
+    padding:10px;
+    border-radius:12px;
+    transition:.3s;
+}
+
+.audio-player.playing{
+    background:rgba(255,140,0,0.08);
+    box-shadow:0 0 18px rgba(255,140,0,0.4);
+}
+
+.audio-controls{
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.play-btn{
+    background:var(--accent);
+    color:white;
+    border-radius:50%;
+    width:40px;
+    height:40px;
+    font-size:16px;
+    cursor:pointer;
+}
+
+.progress{
+    width:100%;
+    accent-color:var(--accent);
+}
+</style>
+</head>
+
+<body>
+
+<div class="overlay" onclick="closeCard()"></div>
+
+<canvas id="particles"></canvas>
+
+<h1>Şiir Sesleri</h1>
+
+<div class="quote">
+Değerle düşün, Bilimle üret, Doğayla yaşa!
+</div>
+
+<div class="controls">
+
+<button id="randomBtn" onclick="randomSiir()">🎲 Rastgele</button>
+
+<input
+id="search"
+placeholder="Şiir ara..."
+onkeyup="filterPoems()"
+>
 
 <button id="themeBtn" onclick="toggleTheme()">🌙</button>
 
-</div>  <div class="poem-container" id="list"></div>  <script>  
-  
-const siirler=[  
-  
-{  
-baslik:"Şiir 1",  
-metin:`Kalbimde sessiz bir rüzgar,  
-Geceye düşer hatıralar.`,  
-ses:"ses1.mp3"  
-},  
-  
-{  
-baslik:"Şiir 2",  
-metin:`Yollar uzun, gözler yorgun,  
-Aşk yine bana vurgun.`,  
-ses:"ses2.mp3"  
-},  
-  
-{  
-baslik:"Şiir 3",  
-metin:`Deniz kadar derin sustum,  
-Adını içimde duydum.`,  
-ses:"ses3.mp3"  
-},  
-  
-{  
-baslik:"Şiir 4",  
-metin:`Bir yıldız kaydı geceden,  
-Ben geçemedim senden.`,  
-ses:"ses4.mp3"  
-},  
-  
-{  
-baslik:"Şiir 5",  
-metin:`Zaman geçer iz bırakır,  
-Giden kalpte sızı yakar.`,  
-ses:"ses5.mp3"  
-},  
-  
-{  
-baslik:"Şiir 6",  
-metin:`Sessizliğin içinde kaldım,  
-Adını rüzgara yazdım.`,  
-ses:"ses6.mp3"  
-},  
-  
-{  
-baslik:"Şiir 7",  
-metin:`Geceler yine seni anar,  
-Kalbim usulca sana yanar.`,  
-ses:"ses7.mp3"  
-},  
-  
-{  
-baslik:"Şiir 8",  
-metin:`Bir umut saklı gözlerinde,  
-Kayboldum hayallerinde.`,  
-ses:"ses8.mp3"  
-},  
-  
-{  
-baslik:"Şiir 9",  
-metin:`Yağmur düştü kaldırımlara,  
-İçim döndü eski yıllara.`,  
-ses:"ses9.mp3"  
-},  
-  
-{  
-baslik:"Şiir 10",  
-metin:`Kırık bir şarkı gibi kaldım,  
-Seni düşünürken dağıldım.`,  
-ses:"ses10.mp3"  
-},  
-  
-{  
-baslik:"Şiir 11",  
-metin:`Ay ışığı vurdu denize,  
-Adın düştü yine dilime.`,  
-ses:"ses11.mp3"  
-},  
-  
-{  
-baslik:"Şiir 12",  
-metin:`Bir sonbahar akşamında,  
-Kayboldum gözlerinin ardında.`,  
-ses:"ses12.mp3"  
-}  
-  
-];  
-  
-const list=document.getElementById("list");  
-const themeBtn=document.getElementById("themeBtn");  
-  
-function render(){  
-  
-list.innerHTML="";  
-  
-siirler.forEach((s,i)=>{  
-  
-list.innerHTML+=`  
-  
-<div class="poem-card" id="card-${i}">  
-  
-    <div class="poem-header" onclick="toggleCard(${i})">  
-  
-        <div class="poem-name">  
-            ${s.baslik}  
-        </div>  
-  
-    </div>  
-  
-    <div class="poem-text">  
-  
-        ${s.metin}  
-  
-        <div class="audio-player">  
-  
-            <div class="audio-controls">  
-  
-                <button  
-                    class="play-btn"  
-                    onclick="playAudio(${i},this)"  
-                >  
-                    ▶️  
-                </button>  
-  
-                <input  
-                    type="range"  
-                    class="progress"  
-                    value="0"  
-                    min="0"  
-                    step="1"  
-                    onchange="seek(${i},this)"  
-                >  
-  
-            </div>  
-  
-            <audio id="audio-${i}" src="${s.ses}"></audio>  
-  
-        </div>  
-  
-    </div>  
-  
-</div>  
-  
-`;  
-  
-});  
-  
-}  
-  
-/* CARD */  
-  
-function toggleCard(i){  
-  
-let card=document.getElementById("card-"+i);  
-  
-closeCard();  
-  
-card.classList.add("open","active");  
-  
-document.body.classList.add("modal-open");  
-  
-}  
-  
-function closeCard(){  
-  
-document.querySelectorAll(".poem-card").forEach(c=>{  
-  
-c.classList.remove("open","active","highlight");  
-  
-});  
-  
-document.body.classList.remove("modal-open");  
-  
-document.querySelectorAll("audio").forEach(a=>{  
-  
-a.pause();  
-a.currentTime=0;  
-  
-});  
-  
-document.querySelectorAll(".audio-player").forEach(p=>{  
-  
-p.classList.remove("playing");  
-  
-});  
-  
-document.querySelectorAll(".play-btn").forEach(btn=>{  
-  
-btn.innerText="▶️";  
-  
-});  
-  
-}  
-  
-/* AUDIO */  
-  
-function playAudio(i,btn){  
-  
-let audio=document.getElementById("audio-"+i);  
-let player=btn.closest(".audio-player");  
-  
-/* diğerlerini kapat */  
-  
-document.querySelectorAll("audio").forEach(a=>{  
-  
-if(a!==audio){  
-  
-a.pause();  
-a.currentTime=0;  
-  
-}  
-  
-});  
-  
-document.querySelectorAll(".play-btn").forEach(b=>{  
-  
-if(b!==btn){  
-  
-b.innerText="▶️";  
-  
-}  
-  
-});  
-  
-document.querySelectorAll(".audio-player").forEach(p=>{  
-  
-if(p!==player){  
-  
-p.classList.remove("playing");  
-  
-}  
-  
-});  
-  
-if(audio.paused){  
-  
-audio.play();  
-  
-btn.innerText="⏸";  
-  
-player.classList.add("playing");  
-  
-}else{  
-  
-audio.pause();  
-  
-btn.innerText="▶️";  
-  
-player.classList.remove("playing");  
-  
-}  
-  
-audio.ontimeupdate=()=>{  
-  
-let progress=btn.parentElement.querySelector(".progress");  
-  
-progress.max=audio.duration;  
-  
-progress.value=audio.currentTime;  
-  
-}  
-  
-audio.onended=()=>{  
-  
-btn.innerText="▶️";  
-  
-player.classList.remove("playing");  
-  
-}  
-  
-}  
-  
-function seek(i,range){  
-  
-let audio=document.getElementById("audio-"+i);  
-  
-audio.currentTime=range.value;  
-  
-}  
-  
-/* RANDOM */  
-  
-function randomSiir(){  
-  
-let btn=document.getElementById("randomBtn");  
-  
-btn.classList.add("random-animate");  
-  
-let cards=document.querySelectorAll(".poem-card");  
-  
-let index=0;  
-let rounds=0;  
-let max=18;  
-  
-let interval=setInterval(()=>{  
-  
-cards.forEach(c=>c.classList.remove("highlight"));  
-  
-cards[index].classList.add("highlight");  
-  
-index=(index+1)%cards.length;  
-  
-rounds++;  
-  
-if(rounds>max){  
-  
-clearInterval(interval);  
-  
-let finalIndex=Math.floor(Math.random()*cards.length);  
-  
-setTimeout(()=>{  
-  
-toggleCard(finalIndex);  
-  
-},250);  
-  
-}  
-  
-},90);  
-  
-setTimeout(()=>{  
-  
-btn.classList.remove("random-animate");  
-  
-},500);  
-  
-}  
-  
-/* SEARCH */  
-  
-function filterPoems(){  
-  
-let val=document  
-.getElementById("search")  
-.value  
-.toLowerCase();  
-  
-document.querySelectorAll(".poem-card").forEach(card=>{  
-  
-let t=card  
-.querySelector(".poem-name")  
-.innerText  
-.toLowerCase();  
-  
-card.style.display=t.includes(val)  
-?"block"  
-:"none";  
-  
-});  
-  
-}  
-  
-/* THEME */  
-  
-function toggleTheme(){  
-  
-document.body.classList.toggle("dark");  
-  
-localStorage.setItem(  
-"theme",  
-document.body.classList.contains("dark")  
-?"dark"  
-:"light"  
-);  
-  
-updateTheme();  
-  
-}  
-  
-function updateTheme(){  
-  
-themeBtn.innerText=  
-document.body.classList.contains("dark")  
-?"☀️"  
-:"🌙";  
-  
-}  
-  
-(function(){  
-  
-if(localStorage.getItem("theme")==="dark"){  
-  
-document.body.classList.add("dark");  
-  
-}  
-  
-updateTheme();  
-  
-})();  
-  
-render();  
-  
-/* PARTICLES */  
-  
-const canvas=document.getElementById("particles");  
-const ctx=canvas.getContext("2d");  
-  
-let w,h,p=[];  
-  
-function resize(){  
-  
-w=canvas.width=innerWidth;  
-h=canvas.height=innerHeight;  
-  
-}  
-  
-resize();  
-  
-addEventListener("resize",resize);  
-  
-for(let i=0;i<60;i++){  
-  
-p.push({  
-  
-x:Math.random()*w,  
-y:Math.random()*h,  
-r:Math.random()*2,  
-  
-dx:(Math.random()-.5)*0.5,  
-dy:(Math.random()-.5)*0.5  
-  
-});  
-  
-}  
-  
-function animate(){  
-  
-ctx.clearRect(0,0,w,h);  
-  
-for(let i of p){  
-  
-i.x+=i.dx;  
-i.y+=i.dy;  
-  
-if(i.x<0||i.x>w)i.dx*=-1;  
-if(i.y<0||i.y>h)i.dy*=-1;  
-  
-ctx.beginPath();  
-  
-ctx.arc(i.x,i.y,i.r,0,Math.PI*2);  
-  
-ctx.fillStyle="rgba(255,255,255,.8)";  
-  
-ctx.fill();  
-  
-}  
-  
-requestAnimationFrame(animate);  
-  
-}  
-  
-animate();  
-  
-</script>  </body>  
+</div>
+
+<div class="poem-container" id="list"></div>
+
+<script>
+
+const siirler=[
+
+{
+baslik:"Şiir 1",
+metin:`Kalbimde sessiz bir rüzgar,
+Geceye düşer hatıralar.`,
+ses:"ses1.mp3"
+},
+
+{
+baslik:"Şiir 2",
+metin:`Yollar uzun, gözler yorgun,
+Aşk yine bana vurgun.`,
+ses:"ses2.mp3"
+},
+
+{
+baslik:"Şiir 3",
+metin:`Deniz kadar derin sustum,
+Adını içimde duydum.`,
+ses:"ses3.mp3"
+},
+
+{
+baslik:"Selam Ola",
+metin:`Bu dünyadan gider olduk
+Kalanlara selam olsun
+Bizim için hayır dua
+Kılanlara selam olsun
+
+Selâ verile kastımıza
+Gider olduk dostumuza
+Namaz için üstümüze
+Duranlara selam olsun
+
+Dünyaya gelenler gider
+Hergiz gelmez yola gider
+Bizim halimizden haber
+Soranlara selam olsun
+
+Miskin Yunus söyler sözün
+Yaş doldurmuş iki gözün
+Bizi bilmeyen ne bilsin
+Bilenlere selam olsun`,
+ses:"ses4.mp3"
+},
+
+{
+baslik:"Şiir 5",
+metin:`Zaman geçer iz bırakır,
+Giden kalpte sızı yakar.`,
+ses:"ses5.mp3"
+},
+
+{
+baslik:"Şiir 6",
+metin:`Sessizliğin içinde kaldım,
+Adını rüzgara yazdım.`,
+ses:"ses6.mp3"
+},
+
+{
+baslik:"Erenlerin Gönlünde",
+metin:`Erenlerin gönlünde o sultan dükkan açtı,
+Nice bizim gibiler onda konarak göçtü.
+
+Cümle erenler uçtu, dağlar, yazılar geçti,
+Aşk kazanına düştü, orda kaynadı pişti.
+
+Bu dünyanın meseli, benzer murdar gövdeye,
+İtler murdara üşdü, Hak dostu kodu kaçtı.
+
+Aşık mı diyem ona, canını terketmedi,
+Aşık ona diyeler, melamet dile düştü.
+
+Yine esridi Yunus, Taptuk yüzün görelden,
+Meğer onun gönlünden bir cur'a şerbet içti.
+
+Yunus Emre`,
+ses:"ses7.mp3"
+},
+
+{
+baslik:"Şiir 8",
+metin:`Bir umut saklı gözlerinde,
+Kayboldum hayallerinde.`,
+ses:"ses8.mp3"
+},
+
+{
+baslik:"Şiir 9",
+metin:`Yağmur düştü kaldırımlara,
+İçim döndü eski yıllara.`,
+ses:"ses9.mp3"
+},
+
+{
+baslik:"Biz Kimseye Kin Tutmayız",
+metin:`Biz kimseye kin tutmayız
+Ağyar dahi dosttur bize
+Kanda ıssızlık var ise
+Mahalle vü şardır bize
+
+Adımız miskindir bizim
+Düşmanımız kindir bizim
+Biz kimseye kin tutmayız
+Kamu âlem birdir bize
+
+Vatan bize cennetdürür
+Yoldaşımız Kak'dürür
+Hak'tan yana yönelicek
+Başka yollar dardır bize
+
+Dünya bir avrattır karı
+Yoldan iltir niceleri
+Sürün gitsin öyleleri
+Onu sevmek ardır bize
+
+Dünya haramdır haslara
+Helal olmuş nekeslere
+Biz dünyayı dost tutmayız
+Ol dünya murdardır bize
+
+Yunus eydür Allah deriz
+Allah ile kapılmışız
+Dergâhına yüz tutuban
+Hemen bir ikrardır bize`,
+ses:"ses10.mp3"
+},
+
+{
+baslik:"Aşkın Aldı Benden Beni",
+metin:`Aşkın aldı benden beni
+Bana seni gerek seni
+Ben yanarım dünü günü
+Bana seni gerek seni
+
+Ne varlığa senivirim
+Ne yokluğa yerinirim
+Aşkın ile avunurum
+Bana seni gerek seni
+
+Aşıklara sohbet gerek
+Zahidlere cennet gerek
+Mecnunlara Leyla gerek
+Bana seni gerek seni
+
+Eğer ben öldüreler
+Külüm göğe savuralar
+Toprağım anda çağırır
+Bana seni gerek seni
+
+Cennet cennet dedikleri
+Bir ev ile birkaç huri
+İsteyene ver onları
+Bana seni gerek seni
+
+Yunus dürür benim adım
+Dün gün artar benim derdim
+İki cihanda maksudum
+Bana seni gerek seni`,
+ses:"ses11.mp3"
+}
+
+];
+
+const list=document.getElementById("list");
+const themeBtn=document.getElementById("themeBtn");
+
+function render(){
+
+list.innerHTML="";
+
+siirler.forEach((s,i)=>{
+
+list.innerHTML+=`
+
+<div class="poem-card" id="card-${i}">
+
+<div class="poem-header" onclick="toggleCard(${i})">
+
+<div class="poem-name">
+${s.baslik}
+</div>
+
+</div>
+
+<div class="poem-text">
+
+${s.metin}
+
+<div class="audio-player">
+
+<div class="audio-controls">
+
+<button
+class="play-btn"
+onclick="playAudio(${i},this)"
+>
+▶️
+</button>
+
+<input
+type="range"
+class="progress"
+value="0"
+min="0"
+step="1"
+onchange="seek(${i},this)"
+>
+
+</div>
+
+<audio id="audio-${i}" src="${s.ses}"></audio>
+
+</div>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+}
+
+function toggleCard(i){
+
+let card=document.getElementById("card-"+i);
+
+closeCard();
+
+card.classList.add("open","active");
+
+document.body.classList.add("modal-open");
+
+}
+
+function closeCard(){
+
+document.querySelectorAll(".poem-card").forEach(c=>{
+
+c.classList.remove("open","active","highlight");
+
+});
+
+document.body.classList.remove("modal-open");
+
+document.querySelectorAll("audio").forEach(a=>{
+
+a.pause();
+a.currentTime=0;
+
+});
+
+document.querySelectorAll(".audio-player").forEach(p=>{
+
+p.classList.remove("playing");
+
+});
+
+document.querySelectorAll(".play-btn").forEach(btn=>{
+
+btn.innerText="▶️";
+
+});
+
+}
+
+function playAudio(i,btn){
+
+let audio=document.getElementById("audio-"+i);
+let player=btn.closest(".audio-player");
+
+document.querySelectorAll("audio").forEach(a=>{
+
+if(a!==audio){
+
+a.pause();
+a.currentTime=0;
+
+}
+
+});
+
+document.querySelectorAll(".play-btn").forEach(b=>{
+
+if(b!==btn){
+
+b.innerText="▶️";
+
+}
+
+});
+
+document.querySelectorAll(".audio-player").forEach(p=>{
+
+if(p!==player){
+
+p.classList.remove("playing");
+
+}
+
+});
+
+if(audio.paused){
+
+audio.play();
+
+btn.innerText="⏸";
+
+player.classList.add("playing");
+
+}else{
+
+audio.pause();
+
+btn.innerText="▶️";
+
+player.classList.remove("playing");
+
+}
+
+audio.ontimeupdate=()=>{
+
+let progress=btn.parentElement.querySelector(".progress");
+
+progress.max=audio.duration;
+
+progress.value=audio.currentTime;
+
+}
+
+audio.onended=()=>{
+
+btn.innerText="▶️";
+
+player.classList.remove("playing");
+
+}
+
+}
+
+function seek(i,range){
+
+let audio=document.getElementById("audio-"+i);
+
+audio.currentTime=range.value;
+
+}
+
+function randomSiir(){
+
+let btn=document.getElementById("randomBtn");
+
+btn.classList.add("random-animate");
+
+let cards=document.querySelectorAll(".poem-card");
+
+let index=0;
+let rounds=0;
+let max=18;
+
+let interval=setInterval(()=>{
+
+cards.forEach(c=>c.classList.remove("highlight"));
+
+cards[index].classList.add("highlight");
+
+index=(index+1)%cards.length;
+
+rounds++;
+
+if(rounds>max){
+
+clearInterval(interval);
+
+let finalIndex=Math.floor(Math.random()*cards.length);
+
+setTimeout(()=>{
+
+toggleCard(finalIndex);
+
+},250);
+
+}
+
+},90);
+
+setTimeout(()=>{
+
+btn.classList.remove("random-animate");
+
+},500);
+
+}
+
+function filterPoems(){
+
+let val=document
+.getElementById("search")
+.value
+.toLowerCase();
+
+document.querySelectorAll(".poem-card").forEach(card=>{
+
+let t=card
+.querySelector(".poem-name")
+.innerText
+.toLowerCase();
+
+card.style.display=t.includes(val)
+?"block"
+:"none";
+
+});
+
+}
+
+function toggleTheme(){
+
+document.body.classList.toggle("dark");
+
+localStorage.setItem(
+"theme",
+document.body.classList.contains("dark")
+?"dark"
+:"light"
+);
+
+updateTheme();
+
+}
+
+function updateTheme(){
+
+themeBtn.innerText=
+document.body.classList.contains("dark")
+?"☀️"
+:"🌙";
+
+}
+
+(function(){
+
+if(localStorage.getItem("theme")==="dark"){
+
+document.body.classList.add("dark");
+
+}
+
+updateTheme();
+
+})();
+
+render();
+
+const canvas=document.getElementById("particles");
+const ctx=canvas.getContext("2d");
+
+let w,h,p=[];
+
+function resize(){
+
+w=canvas.width=innerWidth;
+h=canvas.height=innerHeight;
+
+}
+
+resize();
+
+addEventListener("resize",resize);
+
+for(let i=0;i<60;i++){
+
+p.push({
+
+x:Math.random()*w,
+y:Math.random()*h,
+r:Math.random()*2,
+
+dx:(Math.random()-.5)*0.5,
+dy:(Math.random()-.5)*0.5
+
+});
+
+}
+
+function animate(){
+
+ctx.clearRect(0,0,w,h);
+
+for(let i of p){
+
+i.x+=i.dx;
+i.y+=i.dy;
+
+if(i.x<0||i.x>w)i.dx*=-1;
+if(i.y<0||i.y>h)i.dy*=-1;
+
+ctx.beginPath();
+
+ctx.arc(i.x,i.y,i.r,0,Math.PI*2);
+
+ctx.fillStyle="rgba(255,255,255,.8)";
+
+ctx.fill();
+
+}
+
+requestAnimationFrame(animate);
+
+}
+
+animate();
+
+</script>
+
+</body>
 </html>
