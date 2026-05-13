@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -207,6 +208,7 @@ input{
     gap:8px;
 }
 
+/* SADE BUTON */
 .play-btn{
     background:var(--accent);
     color:white;
@@ -214,12 +216,21 @@ input{
     width:40px;
     height:40px;
     font-size:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
     cursor:pointer;
 }
 
 .progress{
     width:100%;
     accent-color:var(--accent);
+}
+
+/* SÜRE */
+.time{
+    font-size:13px;
+    min-width:80px;
 }
 </style>
 </head>
@@ -253,94 +264,23 @@ Değerle düşün, Bilimle üret, Doğayla yaşa!
 
 const siirler=[
 
-{
-baslik:"Şiir 1",
-metin:`Kalbimde sessiz bir rüzgar,
-Geceye düşer hatıralar.`,
-ses:"ses1.mp3"
-},
+{baslik:"Şiir 1",metin:`Kalbimde sessiz bir rüzgar,
+Geceye düşer hatıralar.`,ses:"ses1.mp3"},
 
-{
-baslik:"Şiir 2",
-metin:`Yollar uzun, gözler yorgun,
-Aşk yine bana vurgun.`,
-ses:"ses2.mp3"
-},
-
-{
-baslik:"Şiir 3",
-metin:`Deniz kadar derin sustum,
-Adını içimde duydum.`,
-ses:"ses3.mp3"
-},
-
-{
-baslik:"Şiir 4",
-metin:`Bir yıldız kaydı geceden,
-Ben geçemedim senden.`,
-ses:"ses4.mp3"
-},
-
-{
-baslik:"Şiir 5",
-metin:`Zaman geçer iz bırakır,
-Giden kalpte sızı yakar.`,
-ses:"ses5.mp3"
-},
-
-{
-baslik:"Şiir 6",
-metin:`Sessizliğin içinde kaldım,
-Adını rüzgara yazdım.`,
-ses:"ses6.mp3"
-},
-
-{
-baslik:"Şiir 7",
-metin:`Geceler yine seni anar,
-Kalbim usulca sana yanar.`,
-ses:"ses7.mp3"
-},
-
-{
-baslik:"Şiir 8",
-metin:`Bir umut saklı gözlerinde,
-Kayboldum hayallerinde.`,
-ses:"ses8.mp3"
-},
-
-{
-baslik:"Şiir 9",
-metin:`Yağmur düştü kaldırımlara,
-İçim döndü eski yıllara.`,
-ses:"ses9.mp3"
-},
-
-{
-baslik:"Şiir 10",
-metin:`Kırık bir şarkı gibi kaldım,
-Seni düşünürken dağıldım.`,
-ses:"ses10.mp3"
-},
-
-{
-baslik:"Şiir 11",
-metin:`Ay ışığı vurdu denize,
-Adın düştü yine dilime.`,
-ses:"ses11.mp3"
-},
-
-{
-baslik:"Şiir 12",
-metin:`Bir sonbahar akşamında,
-Kayboldum gözlerinin ardında.`,
-ses:"ses12.mp3"
-}
+{baslik:"Şiir 2",metin:`Yollar uzun, gözler yorgun,
+Aşk yine bana vurgun.`,ses:"ses2.mp3"}
 
 ];
 
 const list=document.getElementById("list");
 const themeBtn=document.getElementById("themeBtn");
+
+/* YENİ */
+function formatTime(sec){
+let m=Math.floor(sec/60)||0;
+let s=Math.floor(sec%60)||0;
+return `${m}:${s<10?"0":""}${s}`;
+}
 
 function render(){
 
@@ -352,45 +292,38 @@ list.innerHTML+=`
 
 <div class="poem-card" id="card-${i}">
 
-    <div class="poem-header" onclick="toggleCard(${i})">
+<div class="poem-header" onclick="toggleCard(${i})">
+<div class="poem-name">${s.baslik}</div>
+</div>
 
-        <div class="poem-name">
-            ${s.baslik}
-        </div>
+<div class="poem-text">
 
-    </div>
+${s.metin}
 
-    <div class="poem-text">
+<div class="audio-player">
 
-        ${s.metin}
+<div class="audio-controls">
 
-        <div class="audio-player">
+<button class="play-btn" onclick="playAudio(${i},this)">▶</button>
 
-            <div class="audio-controls">
+<input
+type="range"
+class="progress"
+value="0"
+min="0"
+step="0.1"
+oninput="seek(${i},this)"
+>
 
-                <button
-                    class="play-btn"
-                    onclick="playAudio(${i},this)"
-                >
-                    ▶️
-                </button>
+<div class="time" id="time-${i}">0:00 / 0:00</div>
 
-                <input
-                    type="range"
-                    class="progress"
-                    value="0"
-                    min="0"
-                    step="1"
-                    onchange="seek(${i},this)"
-                >
+</div>
 
-            </div>
+<audio id="audio-${i}" src="${s.ses}"></audio>
 
-            <audio id="audio-${i}" src="${s.ses}"></audio>
+</div>
 
-        </div>
-
-    </div>
+</div>
 
 </div>
 
@@ -400,309 +333,40 @@ list.innerHTML+=`
 
 }
 
-/* CARD */
-
-function toggleCard(i){
-
-let card=document.getElementById("card-"+i);
-
-closeCard();
-
-card.classList.add("open","active");
-
-document.body.classList.add("modal-open");
-
-}
-
-function closeCard(){
-
-document.querySelectorAll(".poem-card").forEach(c=>{
-
-c.classList.remove("open","active","highlight");
-
-});
-
-document.body.classList.remove("modal-open");
-
-document.querySelectorAll("audio").forEach(a=>{
-
-a.pause();
-a.currentTime=0;
-
-});
-
-document.querySelectorAll(".audio-player").forEach(p=>{
-
-p.classList.remove("playing");
-
-});
-
-document.querySelectorAll(".play-btn").forEach(btn=>{
-
-btn.innerText="▶️";
-
-});
-
-}
-
-/* AUDIO */
-
+/* SADECE BURASI FIX */
 function playAudio(i,btn){
 
 let audio=document.getElementById("audio-"+i);
-let player=btn.closest(".audio-player");
-
-/* diğerlerini kapat */
-
-document.querySelectorAll("audio").forEach(a=>{
-
-if(a!==audio){
-
-a.pause();
-a.currentTime=0;
-
-}
-
-});
-
-document.querySelectorAll(".play-btn").forEach(b=>{
-
-if(b!==btn){
-
-b.innerText="▶️";
-
-}
-
-});
-
-document.querySelectorAll(".audio-player").forEach(p=>{
-
-if(p!==player){
-
-p.classList.remove("playing");
-
-}
-
-});
+let progress=btn.parentElement.querySelector(".progress");
+let time=document.getElementById("time-"+i);
 
 if(audio.paused){
-
 audio.play();
-
-btn.innerText="⏸";
-
-player.classList.add("playing");
-
+btn.innerText="❚❚";
 }else{
-
 audio.pause();
-
-btn.innerText="▶️";
-
-player.classList.remove("playing");
-
+btn.innerText="▶";
 }
 
 audio.ontimeupdate=()=>{
-
-let progress=btn.parentElement.querySelector(".progress");
-
+if(audio.duration){
 progress.max=audio.duration;
-
 progress.value=audio.currentTime;
 
+time.innerText=
+formatTime(audio.currentTime)+" / "+formatTime(audio.duration);
 }
-
-audio.onended=()=>{
-
-btn.innerText="▶️";
-
-player.classList.remove("playing");
+};
 
 }
 
-}
-
+/* SEEK */
 function seek(i,range){
-
 let audio=document.getElementById("audio-"+i);
-
 audio.currentTime=range.value;
-
 }
-
-/* RANDOM */
-
-function randomSiir(){
-
-let btn=document.getElementById("randomBtn");
-
-btn.classList.add("random-animate");
-
-let cards=document.querySelectorAll(".poem-card");
-
-let index=0;
-let rounds=0;
-let max=18;
-
-let interval=setInterval(()=>{
-
-cards.forEach(c=>c.classList.remove("highlight"));
-
-cards[index].classList.add("highlight");
-
-index=(index+1)%cards.length;
-
-rounds++;
-
-if(rounds>max){
-
-clearInterval(interval);
-
-let finalIndex=Math.floor(Math.random()*cards.length);
-
-setTimeout(()=>{
-
-toggleCard(finalIndex);
-
-},250);
-
-}
-
-},90);
-
-setTimeout(()=>{
-
-btn.classList.remove("random-animate");
-
-},500);
-
-}
-
-/* SEARCH */
-
-function filterPoems(){
-
-let val=document
-.getElementById("search")
-.value
-.toLowerCase();
-
-document.querySelectorAll(".poem-card").forEach(card=>{
-
-let t=card
-.querySelector(".poem-name")
-.innerText
-.toLowerCase();
-
-card.style.display=t.includes(val)
-?"block"
-:"none";
-
-});
-
-}
-
-/* THEME */
-
-function toggleTheme(){
-
-document.body.classList.toggle("dark");
-
-localStorage.setItem(
-"theme",
-document.body.classList.contains("dark")
-?"dark"
-:"light"
-);
-
-updateTheme();
-
-}
-
-function updateTheme(){
-
-themeBtn.innerText=
-document.body.classList.contains("dark")
-?"☀️"
-:"🌙";
-
-}
-
-(function(){
-
-if(localStorage.getItem("theme")==="dark"){
-
-document.body.classList.add("dark");
-
-}
-
-updateTheme();
-
-})();
 
 render();
-
-/* PARTICLES */
-
-const canvas=document.getElementById("particles");
-const ctx=canvas.getContext("2d");
-
-let w,h,p=[];
-
-function resize(){
-
-w=canvas.width=innerWidth;
-h=canvas.height=innerHeight;
-
-}
-
-resize();
-
-addEventListener("resize",resize);
-
-for(let i=0;i<60;i++){
-
-p.push({
-
-x:Math.random()*w,
-y:Math.random()*h,
-r:Math.random()*2,
-
-dx:(Math.random()-.5)*0.5,
-dy:(Math.random()-.5)*0.5
-
-});
-
-}
-
-function animate(){
-
-ctx.clearRect(0,0,w,h);
-
-for(let i of p){
-
-i.x+=i.dx;
-i.y+=i.dy;
-
-if(i.x<0||i.x>w)i.dx*=-1;
-if(i.y<0||i.y>h)i.dy*=-1;
-
-ctx.beginPath();
-
-ctx.arc(i.x,i.y,i.r,0,Math.PI*2);
-
-ctx.fillStyle="rgba(255,255,255,.8)";
-
-ctx.fill();
-
-}
-
-requestAnimationFrame(animate);
-
-}
-
-animate();
 
 </script>
 
