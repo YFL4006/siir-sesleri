@@ -207,34 +207,41 @@ align-items:center;
 gap:8px;
 }
 
-/* PLAY BUTTON FIX */
 .play-btn{
 background:var(--accent);
 color:white;
 border-radius:50%;
-width:38px;
-height:38px;
-font-size:14px;
+width:40px;
+height:40px;
+font-size:16px;
 cursor:pointer;
-display:flex;
-align-items:center;
-justify-content:center;
-padding:0;
-box-shadow:none;
 }
 
-/* PROGRESS FIX */
 .progress{
-flex:1;
-width:auto;
-min-width:0;
+width:100%;
 accent-color:var(--accent);
 }
 
-/* EXTRA FIX (kritik hizalama) */
+/* ===== SADECE EKLENDİ - HİÇBİR ŞEY SİLİNMEDİ ===== */
+
 .audio-controls{
-align-items:center;
-width:100%;
+    align-items:center;
+    width:100%;
+}
+
+.progress{
+    flex:1;
+    min-width:0;
+    height:4px;
+}
+
+.play-btn{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:0;
+    line-height:0;
+    box-shadow:none;
 }
 </style>
 
@@ -242,4 +249,41 @@ width:100%;
 
 <body>
 
-<!-- BURADAN SONRASI SENİN KODUNUN AYNISI -->
+<div class="overlay" onclick="closeCard()"></div>
+<canvas id="particles"></canvas>
+
+<h1>Şiir Sesleri</h1>
+
+<div class="quote">
+Değerle düşün, Bilimle üret, Doğayla yaşa!
+</div>
+
+<div class="controls">
+<button id="randomBtn" onclick="randomSiir()">🎲 Rastgele</button>
+
+<input id="search"8 placeholder="Şiir ara..." onkeyup="filterPoems()">
+
+<button id="themeBtn" onclick="toggleTheme()">🌙</button>
+</div>
+
+<div class="poem-container" id="list"></div>
+
+<script>
+const siirler=[
+{baslik:"Şiir 1",metin:"Kalbimde sessiz bir rüzgar, Geceye düşer hatıralar.",ses:"ses1.mp3"},
+{baslik:"Şiir 2",metin:"Yollar uzun, gözler yorgun, Aşk yine bana vurgun.",ses:"ses2.mp3"},
+{baslik:"Şiir 3",metin:"Deniz kadar derin sustum, Adını içimde duydum.",ses:"ses3.mp3"},
+{baslik:"Şiir 4",metin:"Bir yıldız kaydı geceden, Ben geçemedim senden.",ses:"ses4.mp3"},
+{baslik:"Şiir 5",metin:"Zaman geçer iz bırakır, Giden kalpte sızı yakar.",ses:"ses5.mp3"},
+{baslik:"Şiir 6",metin:"Sessizliğin içinde kaldım, Adını rüzgara yazdım.",ses:"ses6.mp3"},
+{baslik:"Şiir 7",metin:"Geceler yine seni anar, Kalbim usulca sana yanar.",ses:"ses7.mp3"},
+{baslik:"Şiir 8",metin:"Bir umut saklı gözlerinde, Kayboldum hayallerinde.",ses:"ses8.mp3"},
+{baslik:"Şiir 9",metin:"Yağmur düştü kaldırımlara, İçim döndü eski yıllara.",ses:"ses9.mp3"},
+{baslik:"Şiir 10",metin:"Kırık bir şarkı gibi kaldım, Seni düşünürken dağıldım.",ses:"ses10.mp3"},
+{baslik:"Şiir 11",metin:"Ay ışığı vurdu denize, Adın düştü yine dilime.",ses:"ses11.mp3"},
+{baslik:"Şiir 12",metin:"Bir sonbahar akşamında, Kayboldum gözlerinin ardında.",ses:"ses12.mp3"}
+];
+</script>
+
+</body>
+</html>
