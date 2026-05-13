@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -210,27 +209,19 @@ input{
 
 /* SADE BUTON */
 .play-btn{
-    background:var(--accent);
-    color:white;
+    background:none;
+    color:var(--accent);
+    border:2px solid var(--accent);
     border-radius:50%;
-    width:40px;
-    height:40px;
-    font-size:16px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+    width:36px;
+    height:36px;
+    font-size:14px;
     cursor:pointer;
 }
 
 .progress{
     width:100%;
     accent-color:var(--accent);
-}
-
-/* SÜRE */
-.time{
-    font-size:13px;
-    min-width:80px;
 }
 </style>
 </head>
@@ -249,11 +240,9 @@ Değerle düşün, Bilimle üret, Doğayla yaşa!
 <div class="controls">
     <button id="randomBtn" onclick="randomSiir()">🎲 Rastgele</button>
 
-    <input
-        id="search"
-        placeholder="Şiir ara..."
-        onkeyup="filterPoems()"
-    >
+    <input id="search"
+    placeholder="Şiir ara..."
+    onkeyup="filterPoems()">
 
     <button id="themeBtn" onclick="toggleTheme()">🌙</button>
 </div>
@@ -263,112 +252,232 @@ Değerle düşün, Bilimle üret, Doğayla yaşa!
 <script>
 
 const siirler=[
-
-{baslik:"Şiir 1",metin:`Kalbimde sessiz bir rüzgar,
-Geceye düşer hatıralar.`,ses:"ses1.mp3"},
-
-{baslik:"Şiir 2",metin:`Yollar uzun, gözler yorgun,
-Aşk yine bana vurgun.`,ses:"ses2.mp3"}
-
+{baslik:"Şiir 1",metin:`Kalbimde sessiz bir rüzgar,\nGeceye düşer hatıralar.`,ses:"ses1.mp3"},
+{baslik:"Şiir 2",metin:`Yollar uzun, gözler yorgun,\nAşk yine bana vurgun.`,ses:"ses2.mp3"},
+{baslik:"Şiir 3",metin:`Deniz kadar derin sustum,\nAdını içimde duydum.`,ses:"ses3.mp3"},
+{baslik:"Şiir 4",metin:`Bir yıldız kaydı geceden,\nBen geçemedim senden.`,ses:"ses4.mp3"},
+{baslik:"Şiir 5",metin:`Zaman geçer iz bırakır,\nGiden kalpte sızı yakar.`,ses:"ses5.mp3"},
+{baslik:"Şiir 6",metin:`Sessizliğin içinde kaldım,\nAdını rüzgara yazdım.`,ses:"ses6.mp3"},
+{baslik:"Şiir 7",metin:`Geceler yine seni anar,\nKalbim usulca sana yanar.`,ses:"ses7.mp3"},
+{baslik:"Şiir 8",metin:`Bir umut saklı gözlerinde,\nKayboldum hayallerinde.`,ses:"ses8.mp3"},
+{baslik:"Şiir 9",metin:`Yağmur düştü kaldırımlara,\nİçim döndü eski yıllara.`,ses:"ses9.mp3"},
+{baslik:"Şiir 10",metin:`Kırık bir şarkı gibi kaldım,\nSeni düşünürken dağıldım.`,ses:"ses10.mp3"},
+{baslik:"Şiir 11",metin:`Ay ışığı vurdu denize,\nAdın düştü yine dilime.`,ses:"ses11.mp3"},
+{baslik:"Şiir 12",metin:`Bir sonbahar akşamında,\nKayboldum gözlerinin ardında.`,ses:"ses12.mp3"}
 ];
 
 const list=document.getElementById("list");
 const themeBtn=document.getElementById("themeBtn");
 
-/* YENİ */
-function formatTime(sec){
-let m=Math.floor(sec/60)||0;
-let s=Math.floor(sec%60)||0;
-return `${m}:${s<10?"0":""}${s}`;
+function render(){
+list.innerHTML="";
+siirler.forEach((s,i)=>{
+list.innerHTML+=`
+<div class="poem-card" id="card-${i}">
+    <div class="poem-header" onclick="toggleCard(${i})">
+        <div class="poem-name">${s.baslik}</div>
+    </div>
+
+    <div class="poem-text">
+        ${s.metin}
+
+        <div class="audio-player">
+            <div class="audio-controls">
+
+                <button class="play-btn" onclick="playAudio(${i},this)">►</button>
+
+                <input type="range"
+                    class="progress"
+                    value="0"
+                    min="0"
+                    step="1"
+                    oninput="seek(${i},this)">
+            </div>
+
+            <audio id="audio-${i}" src="${s.ses}"></audio>
+        </div>
+    </div>
+</div>`;
+});
 }
 
-function render(){
+/* CARD */
+function toggleCard(i){
+let card=document.getElementById("card-"+i);
+closeCard();
+card.classList.add("open","active");
+document.body.classList.add("modal-open");
+}
 
-list.innerHTML="";
+function closeCard(){
+document.querySelectorAll(".poem-card").forEach(c=>{
+c.classList.remove("open","active","highlight");
+});
+document.body.classList.remove("modal-open");
 
-siirler.forEach((s,i)=>{
-
-list.innerHTML+=`
-
-<div class="poem-card" id="card-${i}">
-
-<div class="poem-header" onclick="toggleCard(${i})">
-<div class="poem-name">${s.baslik}</div>
-</div>
-
-<div class="poem-text">
-
-${s.metin}
-
-<div class="audio-player">
-
-<div class="audio-controls">
-
-<button class="play-btn" onclick="playAudio(${i},this)">▶</button>
-
-<input
-type="range"
-class="progress"
-value="0"
-min="0"
-step="0.1"
-oninput="seek(${i},this)"
->
-
-<div class="time" id="time-${i}">0:00 / 0:00</div>
-
-</div>
-
-<audio id="audio-${i}" src="${s.ses}"></audio>
-
-</div>
-
-</div>
-
-</div>
-
-`;
-
+document.querySelectorAll("audio").forEach(a=>{
+a.pause();
+a.currentTime=0;
 });
 
+document.querySelectorAll(".audio-player").forEach(p=>{
+p.classList.remove("playing");
+});
+
+document.querySelectorAll(".play-btn").forEach(btn=>{
+btn.innerText="►";
+});
 }
 
-/* SADECE BURASI FIX */
+/* AUDIO */
 function playAudio(i,btn){
-
 let audio=document.getElementById("audio-"+i);
+let player=btn.closest(".audio-player");
 let progress=btn.parentElement.querySelector(".progress");
-let time=document.getElementById("time-"+i);
+
+document.querySelectorAll("audio").forEach(a=>{
+if(a!==audio){
+a.pause();
+a.currentTime=0;
+}
+});
+
+document.querySelectorAll(".play-btn").forEach(b=>{
+if(b!==btn){ b.innerText="►"; }
+});
+
+document.querySelectorAll(".audio-player").forEach(p=>{
+if(p!==player){ p.classList.remove("playing"); }
+});
 
 if(audio.paused){
 audio.play();
 btn.innerText="❚❚";
+player.classList.add("playing");
 }else{
 audio.pause();
-btn.innerText="▶";
+btn.innerText="►";
+player.classList.remove("playing");
 }
 
-audio.ontimeupdate=()=>{
-if(audio.duration){
+audio.onloadedmetadata=()=>{
 progress.max=audio.duration;
-progress.value=audio.currentTime;
-
-time.innerText=
-formatTime(audio.currentTime)+" / "+formatTime(audio.duration);
-}
 };
 
+audio.ontimeupdate=()=>{
+progress.value=audio.currentTime;
+};
+
+audio.onended=()=>{
+btn.innerText="►";
+player.classList.remove("playing");
+}
 }
 
-/* SEEK */
 function seek(i,range){
 let audio=document.getElementById("audio-"+i);
 audio.currentTime=range.value;
 }
 
+/* RANDOM */
+function randomSiir(){
+let btn=document.getElementById("randomBtn");
+btn.classList.add("random-animate");
+
+let cards=document.querySelectorAll(".poem-card");
+
+let index=0;
+let rounds=0;
+let max=18;
+
+let interval=setInterval(()=>{
+cards.forEach(c=>c.classList.remove("highlight"));
+cards[index].classList.add("highlight");
+
+index=(index+1)%cards.length;
+rounds++;
+
+if(rounds>max){
+clearInterval(interval);
+let finalIndex=Math.floor(Math.random()*cards.length);
+setTimeout(()=>{ toggleCard(finalIndex); },250);
+}
+},90);
+
+setTimeout(()=>{
+btn.classList.remove("random-animate");
+},500);
+}
+
+/* SEARCH */
+function filterPoems(){
+let val=document.getElementById("search").value.toLowerCase();
+document.querySelectorAll(".poem-card").forEach(card=>{
+let t=card.querySelector(".poem-name").innerText.toLowerCase();
+card.style.display=t.includes(val)?"block":"none";
+});
+}
+
+/* THEME */
+function toggleTheme(){
+document.body.classList.toggle("dark");
+localStorage.setItem("theme",
+document.body.classList.contains("dark")?"dark":"light");
+updateTheme();
+}
+
+function updateTheme(){
+themeBtn.innerText=document.body.classList.contains("dark")?"☀️":"🌙";
+}
+
+(function(){
+if(localStorage.getItem("theme")==="dark"){
+document.body.classList.add("dark");
+}
+updateTheme();
+})();
+
 render();
 
-</script>
+/* PARTICLES */
+const canvas=document.getElementById("particles");
+const ctx=canvas.getContext("2d");
 
+let w,h,p=[];
+
+function resize(){
+w=canvas.width=innerWidth;
+h=canvas.height=innerHeight;
+}
+resize();
+addEventListener("resize",resize);
+
+for(let i=0;i<60;i++){
+p.push({
+x:Math.random()*w,
+y:Math.random()*h,
+r:Math.random()*2,
+dx:(Math.random()-.5)*0.5,
+dy:(Math.random()-.5)*0.5
+});
+}
+
+function animate(){
+ctx.clearRect(0,0,w,h);
+for(let i of p){
+i.x+=i.dx;
+i.y+=i.dy;
+if(i.x<0||i.x>w)i.dx*=-1;
+if(i.y<0||i.y>h)i.dy*=-1;
+ctx.beginPath();
+ctx.arc(i.x,i.y,i.r,0,Math.PI*2);
+ctx.fillStyle="rgba(255,255,255,.8)";
+ctx.fill();
+}
+requestAnimationFrame(animate);
+}
+animate();
+
+</script>
 </body>
 </html>
