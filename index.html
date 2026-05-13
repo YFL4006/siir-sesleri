@@ -153,7 +153,6 @@ input{
     margin-bottom:8px;
 }
 
-/* ==================== DÜZELTİLEN KISIMLAR ==================== */
 .poem-text{
     max-height:0;
     opacity:0;
@@ -170,7 +169,6 @@ input{
     padding-top:10px;
     padding-bottom:10px;
 }
-/* ============================================================ */
 
 .audio-player{
     margin-top:12px;
@@ -216,7 +214,7 @@ Değerle düşün, Bilimle üret, Doğayla yaşa!
 
 <script>
 
-const siirler = [ /* ... aynı dizi ... */ 
+const siirler = [
 {
 baslik:"Gel Gör Beni Aşk Neyledi",
 metin:`Ben yürürüm yana yana
@@ -255,7 +253,205 @@ Dost elinde avareyim
 Gel gör beni aşk neyledi`,
 ses:"ses1.mp3"
 },
-// ... Diğer şiirleri olduğu gibi bırak (hepsini buraya koy)
+{
+baslik:"Aşk Şiiri",
+metin:`İşitin ey yârenler,
+Kıymetli nesnedir aşk.
+Değmelere bitinmez,
+Hürmetli nesnedir aşk.
+
+Hem cefadır hem safâ
+Hamza'yı attı Kaf'a.
+Aşk iledir Mustafa,
+Devletli nesnedir aşk.
+
+Dağa düşer kül eyler,
+Gönüllere yol eyler,
+Sultanları kul eyler,
+Hikmetli nesnedir aşk.
+
+Miskin Yunus n'eylesin?
+Derdin kime söylesin?
+Varsın dostu toylasın,
+Lezzetli nesnedir aşk.`,
+ses:"ses2.mp3"
+},
+{
+baslik:"Geldi Geçti Ömrüm Benim",
+metin:`Geldi geçti ömrüm benim şol yel esip geçmiş gibi
+Hele bana şöyle geldi şol göz yumup açmış gibi
+
+İşbu söze Hak tanıktır bu can gövdeye konuktur
+Bir gün ola çıka gide kafesten kuş uçmuş gibi
+
+Miskin âdem oğlanını benzetmişler ekinciye
+Kimi biter kimi yiter yere tohum saçmış gibi
+
+Bu dünyada bir nesneye yanar içim göynür özüm
+Yiğit iken ölenlere gök ekini biçmiş gibi`,
+ses:"ses3.mp3"
+},
+{
+baslik:"Selam Ola",
+metin:`Bu dünyadan gider olduk
+Kalanlara selam olsun
+Bizim için hayır dua
+Kılanlara selam olsun
+
+Selâ verile kastımıza
+Gider olduk dostumuza
+Namaz için üstümüze
+Duranlara selam olsun
+
+Dünyaya gelenler gider
+Hergiz gelmez yola gider
+Bizim halimizden haber
+Soranlara selam olsun
+
+Miskin Yunus söyler sözün
+Yaş doldurmuş iki gözün
+Bizi bilmeyen ne bilsin
+Bilenlere selam olsun`,
+ses:"ses4.mp3"
+},
+{
+baslik:"Bir Kez Gönül Yıktın İse",
+metin:`Bir kez gönül yıktınısa
+Bu kıldığın namaz değil
+Yetmiş iki millet dahi
+Elin yüzün yumaz değil
+
+Bir gönülü yaptınısa
+Er eteğin tuttunusa
+Bir kez hayır ettinise
+Binde bir ise az değil
+
+Yunus bu sözleri çatar
+Sanki balı yağa katar
+Halka meta'ların satar
+Yükü gevherdir tuz değil.`,
+ses:"ses5.mp3"
+},
+{
+baslik:"Gönüller Yapmaya Geldim",
+metin:`Benim bunda kararım yok, bunda gitmeye geldim
+Bezirganım mataım çok, alana satmağa geldim.
+Ben gelmedim dâvi için benim işim sevi için
+Aşkın yeri gönüllerdir, gönüller yapmaya geldim
+
+Dost eşruğu deliliğim, aşıklar bilir neliğim
+Devşuruben ikiliğim, birliğe bitmeye geldim
+Yunus Emre aşık olmuş, ma'şuka derdinden olmuş
+Gerçek erin kapısında ömrüm harcamaya geldim`,
+ses:"ses6.mp3"
+},
+{
+baslik:"Erenlerin Gönlünde",
+metin:`Erenlerin gönlünde o sultan dükkan açtı,
+Nice bizim gibiler onda konarak göçtü.
+
+Cümle erenler uçtu, dağlar, yazılar geçti,
+Aşk kazanına düştü, orda kaynadı pişti.
+
+Bu dünyanın meseli, benzer murdar gövdeye,
+İtler murdara üşdü, Hak dostu kodu kaçtı.
+
+Aşık mı diyem ona, canını terketmedi,
+Aşık ona diyeler, melamet dile düştü.
+
+Yine esridi Yunus, Taptuk yüzün görelden,
+Meğer onun gönlünden bir cur'a şerbet içti.`,
+ses:"ses7.mp3"
+},
+{
+baslik:"Elhamdülillah",
+metin:`Hakk'tan gelen şerbeti,
+içtik Elhamdülillâh,
+Şol kudret denizini,
+Geçtik Elhamdülillâh,
+
+Şol karşıdaki dağları,
+Meşeleri bağları,
+Sağlık safalık ile
+aştık Elhamdülillah.
+
+Kuru idik yaş olduk,
+Kanatlandık kuş olduk.
+Birbirimize eş olduk,
+Uçtuk Elhâmdülillah.
+
+Verdiğımız illere,
+Şol Safa gönüllere,
+Halka tapduk manisin,
+Saçtık Elhâmdülillah.`,
+ses:"ses8.mp3"
+},
+{
+baslik:"İlim Kendin Bilmektir",
+metin:`İlim ilim bilmektir
+İlim kendin bilmektir
+Sen kendini bilmezsin
+Ya nice okumaktır
+
+Okumaktan murat ne
+Kişi Hak'kı bilmektir
+Çün okudun bilmezsin
+Ha bir kuru ekmektir
+
+Okudum bildim deme
+Çok taat kıldım deme
+Eğer Hak bilmez isen
+Abes yere gelmektir
+
+Dört kitabın mânâsı
+Bellidir bir elifte
+Sen elifi bilmezsin
+Bu nice okumaktır
+
+Yiğirmi dokuz hece
+Okursun uçtan uca
+Sen elif dersin hoca
+Mânâsı ne demektir
+
+Yunus Emre der hoca
+Gerekse bin var hacca
+Hepisinden iyice
+Bir gönüle girmektir`,
+ses:"ses9.mp3"
+},
+{
+baslik:"Biz Kimseye Kin Tutmayız",
+metin:`Biz kimseye kin tutmayız
+Ağyar dahi dosttur bize
+Kanda ıssızlık var ise
+Mahalle vü şardır bize
+
+Adımız miskindir bizim
+Düşmanımız kindir bizim
+Biz kimseye kin tutmayız
+Kamu âlem birdir bize
+
+Vatan bize cennetdürür
+Yoldaşımız Hak'dürür
+Hak'tan yana yönelicek
+Başka yollar dardır bize
+
+Dünya bir avrattır karı
+Yoldan iltir niceleri
+Sürün gitsin öyleleri
+Onu sevmek ardır bize
+
+Dünya haramdır haslara
+Helal olmuş nekeslere
+Biz dünyayı dost tutmayız
+Ol dünya murdardır bize
+
+Yunus eydür Allah deriz
+Allah ile kapılmışız
+Dergâhına yüz tutuban
+Hemen bir ikrardır bize`,
+ses:"ses10.mp3"
+},
 {
 baslik:"Aşkın Aldı Benden Beni",
 metin:`Aşkın aldı benden beni
@@ -295,7 +491,6 @@ const list = document.getElementById("list");
 
 function render(){
     list.innerHTML = "";
-
     siirler.forEach((s, i) => {
         list.innerHTML += `
         <div class="poem-card" id="card-${i}">
@@ -371,7 +566,7 @@ document.getElementById("themeBtn").innerText = document.body.classList.contains
 
 render();
 
-// Particles (değişmedi)
+// Particles
 const canvas = document.getElementById("particles");
 const ctx = canvas.getContext("2d");
 let w, h, p = [];
@@ -395,14 +590,14 @@ for(let i = 0; i < 60; i++){
 
 function animate(){
     ctx.clearRect(0,0,w,h);
-    for(let i of p){
-        i.x += i.dx;
-        i.y += i.dy;
-        if(i.x < 0 || i.x > w) i.dx *= -1;
-        if(i.y < 0 || i.y > h) i.dy *= -1;
+    for(let particle of p){
+        particle.x += particle.dx;
+        particle.y += particle.dy;
+        if(particle.x < 0 || particle.x > w) particle.dx *= -1;
+        if(particle.y < 0 || particle.y > h) particle.dy *= -1;
 
         ctx.beginPath();
-        ctx.arc(i.x, i.y, i.r, 0, Math.PI*2);
+        ctx.arc(particle.x, particle.y, particle.r, 0, Math.PI*2);
         ctx.fillStyle = "rgba(255,255,255,.8)";
         ctx.fill();
     }
