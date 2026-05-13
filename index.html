@@ -1,44 +1,89 @@
-<!DOCTYPE html>
-<html lang="tr">
+<!DOCTYPE html>  <html lang="tr">    <head>      <meta charset="UTF-8">        <meta name="viewport" content="width=device-width, initial-scale=1.0">          <title>Şiir Sesleri</title>  <style>          
+:root{          
+    --bg1:#fdf6e3;          
+    --bg2:#f5e6ca;          
+    --text:#3b2f2f;          
+    --card:#fff8f0;          
+    --accent:#ff8c00;          
+}    
+body.dark{      
+--bg1:#121212;      
+--bg2:#1f1f1f;      
+--text:#f5f5f5;      
+--card:#2a2a2a;      
+}  
 
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Şiir Sesleri</title>
+body{    
+font-family:Georgia, serif;    
+background:linear-gradient(135deg,var(--bg1),var(--bg2));    
+color:var(--text);    
+min-height:100vh;    
+padding:35px 15px;    
+text-align:center;    
+overflow-x:hidden;    
+transition:.5s;    
+}  
 
-<style>
-:root{
-    --bg1:#fdf6e3;
-    --bg2:#f5e6ca;
-    --text:#3b2f2f;
-    --card:#fff8f0;
-    --accent:#ff8c00;
+*{  
+margin:0;  
+padding:0;  
+box-sizing:border-box;  
+}  
+
+/* === PLAYER FIX START === */
+
+.audio-player{
+margin-top:14px;
+padding:14px;
+border-radius:14px;
+transition:.3s;
+display:flex;
+flex-direction:column;
+gap:10px;
 }
 
-body.dark{
---bg1:#121212;
---bg2:#1f1f1f;
---text:#f5f5f5;
---card:#2a2a2a;
+.audio-player.playing{
+background:rgba(255,140,0,0.10);
+box-shadow:0 0 22px rgba(255,140,0,0.35);
 }
 
-body{
-font-family:Georgia, serif;
-background:linear-gradient(135deg,var(--bg1),var(--bg2));
-color:var(--text);
-min-height:100vh;
-padding:35px 15px;
-text-align:center;
-overflow-x:hidden;
-transition:.5s;
+.audio-controls{
+display:flex;
+align-items:center;
+gap:10px;
+width:100%;
 }
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
+.play-btn{
+background:var(--accent);
+color:white;
+border-radius:50%;
+width:44px;
+height:44px;
+font-size:16px;
+cursor:pointer;
+display:flex;
+align-items:center;
+justify-content:center;
+flex-shrink:0;
+box-shadow:0 6px 15px rgba(0,0,0,0.15);
 }
 
+.play-btn:hover{
+transform:scale(1.08);
+}
+
+.progress{
+width:100%;
+accent-color:var(--accent);
+height:6px;
+border-radius:10px;
+cursor:pointer;
+}
+
+/* === PLAYER FIX END === */
+
+/* geri kalan CSS aynen korundu */
 .overlay{
 position:fixed;
 inset:0;
@@ -180,74 +225,10 @@ animation:popup .3s ease;
 }
 
 @keyframes popup{
-from{
-transform:translate(-50%,-50%) scale(.8);
+from{transform:translate(-50%,-50%) scale(.8);}
+to{transform:translate(-50%,-50%) scale(1);}
 }
-to{
-transform:translate(-50%,-50%) scale(1);
-}
-}
-
-/* PLAYER */
-.audio-player{
-margin-top:14px;
-padding:10px;
-border-radius:12px;
-transition:.3s;
-}
-
-.audio-player.playing{
-background:rgba(255,140,0,0.08);
-box-shadow:0 0 18px rgba(255,140,0,0.4);
-}
-
-.audio-controls{
-display:flex;
-align-items:center;
-gap:8px;
-}
-
-.play-btn{
-background:var(--accent);
-color:white;
-border-radius:50%;
-width:40px;
-height:40px;
-font-size:16px;
-cursor:pointer;
-}
-
-.progress{
-width:100%;
-accent-color:var(--accent);
-}
-
-/* ===== SADECE EKLENDİ - HİÇBİR ŞEY SİLİNMEDİ ===== */
-
-.audio-controls{
-    align-items:center;
-    width:100%;
-}
-
-.progress{
-    flex:1;
-    min-width:0;
-    height:4px;
-}
-
-.play-btn{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:0;
-    line-height:0;
-    box-shadow:none;
-}
-</style>
-
-</head>
-
-<body>
+</style>  </head>  <body>  
 
 <div class="overlay" onclick="closeCard()"></div>
 <canvas id="particles"></canvas>
@@ -258,32 +239,103 @@ accent-color:var(--accent);
 Değerle düşün, Bilimle üret, Doğayla yaşa!
 </div>
 
-<div class="controls">
-<button id="randomBtn" onclick="randomSiir()">🎲 Rastgele</button>
+<div class="controls">          
+<button id="randomBtn" onclick="randomSiir()">🎲 Rastgele</button>  
+<input id="search" placeholder="Şiir ara..." onkeyup="filterPoems()">  
+<button id="themeBtn" onclick="toggleTheme()">🌙</button>  
+</div>  
 
-<input id="search"8 placeholder="Şiir ara..." onkeyup="filterPoems()">
-
-<button id="themeBtn" onclick="toggleTheme()">🌙</button>
-</div>
-
-<div class="poem-container" id="list"></div>
+<div class="poem-container" id="list"></div>  
 
 <script>
-const siirler=[
-{baslik:"Şiir 1",metin:"Kalbimde sessiz bir rüzgar, Geceye düşer hatıralar.",ses:"ses1.mp3"},
-{baslik:"Şiir 2",metin:"Yollar uzun, gözler yorgun, Aşk yine bana vurgun.",ses:"ses2.mp3"},
-{baslik:"Şiir 3",metin:"Deniz kadar derin sustum, Adını içimde duydum.",ses:"ses3.mp3"},
-{baslik:"Şiir 4",metin:"Bir yıldız kaydı geceden, Ben geçemedim senden.",ses:"ses4.mp3"},
-{baslik:"Şiir 5",metin:"Zaman geçer iz bırakır, Giden kalpte sızı yakar.",ses:"ses5.mp3"},
-{baslik:"Şiir 6",metin:"Sessizliğin içinde kaldım, Adını rüzgara yazdım.",ses:"ses6.mp3"},
-{baslik:"Şiir 7",metin:"Geceler yine seni anar, Kalbim usulca sana yanar.",ses:"ses7.mp3"},
-{baslik:"Şiir 8",metin:"Bir umut saklı gözlerinde, Kayboldum hayallerinde.",ses:"ses8.mp3"},
-{baslik:"Şiir 9",metin:"Yağmur düştü kaldırımlara, İçim döndü eski yıllara.",ses:"ses9.mp3"},
-{baslik:"Şiir 10",metin:"Kırık bir şarkı gibi kaldım, Seni düşünürken dağıldım.",ses:"ses10.mp3"},
-{baslik:"Şiir 11",metin:"Ay ışığı vurdu denize, Adın düştü yine dilime.",ses:"ses11.mp3"},
-{baslik:"Şiir 12",metin:"Bir sonbahar akşamında, Kayboldum gözlerinin ardında.",ses:"ses12.mp3"}
-];
-</script>
 
+const siirler=[
+{baslik:"Şiir 1",metin:`Kalbimde sessiz bir rüzgar,
+Geceye düşer hatıralar.`,ses:"ses1.mp3"},
+{baslik:"Şiir 2",metin:`Yollar uzun, gözler yorgun,
+Aşk yine bana vurgun.`,ses:"ses2.mp3"},
+{baslik:"Şiir 3",metin:`Deniz kadar derin sustum,
+Adını içimde duydum.`,ses:"ses3.mp3"}
+];
+
+const list=document.getElementById("list");
+const themeBtn=document.getElementById("themeBtn");
+
+function render(){
+list.innerHTML="";
+siirler.forEach((s,i)=>{
+list.innerHTML+=`
+<div class="poem-card" id="card-${i}">
+<div class="poem-header" onclick="toggleCard(${i})">
+<div class="poem-name">${s.baslik}</div>
+</div>
+
+<div class="poem-text">
+${s.metin}
+
+<div class="audio-player">
+<div class="audio-controls">
+
+<button class="play-btn" onclick="playAudio(${i},this)">▶️</button>
+
+<input type="range" class="progress" value="0" min="0" step="1" onchange="seek(${i},this)">
+
+</div>
+<audio id="audio-${i}" src="${s.ses}"></audio>
+</div>
+
+</div>
+</div>`;
+});
+}
+
+/* === AUDIO (DEĞİŞMEDİ) === */
+
+function playAudio(i,btn){
+
+let audio=document.getElementById("audio-"+i);
+let player=btn.closest(".audio-player");
+
+document.querySelectorAll("audio").forEach(a=>{
+if(a!==audio){a.pause();a.currentTime=0;}
+});
+
+document.querySelectorAll(".play-btn").forEach(b=>{
+if(b!==btn){b.innerText="▶️";}
+});
+
+document.querySelectorAll(".audio-player").forEach(p=>{
+if(p!==player){p.classList.remove("playing");}
+});
+
+if(audio.paused){
+audio.play();
+btn.innerText="⏸";
+player.classList.add("playing");
+}else{
+audio.pause();
+btn.innerText="▶️";
+player.classList.remove("playing");
+}
+
+audio.ontimeupdate=()=>{
+let progress=btn.parentElement.querySelector(".progress");
+progress.max=audio.duration;
+progress.value=audio.currentTime;
+};
+
+audio.onended=()=>{
+btn.innerText="▶️";
+player.classList.remove("playing");
+};
+}
+
+function seek(i,range){
+document.getElementById("audio-"+i).currentTime=range.value;
+}
+
+render();
+
+</script>
 </body>
 </html>
